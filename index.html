@@ -589,9 +589,6 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- Configuración de Firebase (archivo local, no incluido en git) -->
-<script src="config.js"></script>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -697,19 +694,19 @@ function formatMoney(amount, currency) {
   }
 }
 
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBt8Hd-RjdHByRVoDte4RUKGnPpwBoERy4",
+  authDomain: "life-quest-413ab.firebaseapp.com",
+  projectId: "life-quest-413ab",
+  storageBucket: "life-quest-413ab.firebasestorage.app",
+  messagingSenderId: "316851758197",
+  appId: "1:316851758197:web:5663d50879dcb0698d843c"
+};
+
 // ====== BOOTSTRAP ======
 function bootstrap() {
-  const cfg = window.FIREBASE_CONFIG;
-  if (!cfg) {
-    document.getElementById('initLoader').style.display = 'none';
-    document.body.innerHTML = `<div class="app-error">
-      <h2>⚠️ Falta config.js</h2>
-      <p>Copia <code>config.example.js</code> → <code>config.js</code> y rellena con tus datos de Firebase.</p>
-    </div>`;
-    return;
-  }
   try {
-    app = initializeApp(cfg);
+    app = initializeApp(FIREBASE_CONFIG);
     auth = getAuth(app);
     db = getFirestore(app);
     onAuthStateChanged(auth, handleAuthChange);

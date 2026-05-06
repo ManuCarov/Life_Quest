@@ -1,14 +1,11 @@
-# Configuración Firebase con datos privados — nunca subir al repositorio
-config.js
+# Archivos de entorno y secretos
 .env
 .env.*
 .env.local
 *.local
-firebase.local.*
 secrets.*
 
-# Backups y exportaciones
-*.backup.json
+# Backups exportados de la app (pueden contener datos personales)
 life-quest-backup-*.json
 
 # Sistema
