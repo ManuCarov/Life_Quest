@@ -1,0 +1,17 @@
+# Datos personales y configuración local — nunca subir al repositorio
+.env
+.env.*
+.env.local
+*.local
+config.local.*
+firebase.local.*
+secrets.*
+
+# Backups y exportaciones
+*.backup.json
+life-quest-backup-*.json
+
+# Sistema
+Thumbs.db
+.DS_Store
+desktop.ini

@@ -11,7 +11,7 @@
     --text: #f0f0f5; --text-dim: #a0a0b0; --text-mute: #666675;
     --accent: #8b7cf6; --accent-2: #a78bfa; --gold: #fbbf24;
     --green: #34d399; --red: #f87171; --blue: #60a5fa; --pink: #f472b6;
-    --shadow: 0 10px 40px rgba(0,0,0,0.4);
+    --coin: #f59e0b; --shadow: 0 10px 40px rgba(0,0,0,0.4);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -37,12 +37,7 @@
     border: 1px solid var(--border); border-radius: 20px; padding: 32px;
     box-shadow: var(--shadow);
   }
-  .auth-logo {
-    text-align: center; margin-bottom: 8px;
-    font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
+  .auth-logo { text-align: center; margin-bottom: 8px; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .auth-sub { text-align: center; color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
   .auth-tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
   .auth-tab { flex: 1; padding: 8px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text-dim); transition: all 0.15s; background: transparent; border: none; font-family: inherit; }
@@ -51,9 +46,9 @@
   .auth-error.show { display: block; }
   .auth-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; }
   .auth-success.show { display: block; }
-  .setup-warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); color: var(--gold); padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .setup-warn b { color: #fde68a; }
-  .setup-warn code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
+  .config-banner { background: rgba(139,124,246,0.08); border: 1px solid rgba(139,124,246,0.3); border-radius: 12px; padding: 14px; margin-bottom: 18px; display: none; }
+  .config-banner p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.5; }
+  .config-banner b { color: var(--accent-2); }
   .auth-foot { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-mute); }
   .auth-foot a { color: var(--accent); text-decoration: none; cursor: pointer; }
   .auth-foot a:hover { text-decoration: underline; }
@@ -68,6 +63,7 @@
   .pill { background: var(--bg-2); border: 1px solid var(--border); padding: 6px 14px; border-radius: 999px; font-size: 13px; color: var(--text-dim); font-weight: 500; }
   .pill .icon { margin-right: 4px; }
   .streak { color: var(--gold); }
+  .coins-pill { color: var(--coin); border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.08); }
   .sync-pill { display: inline-flex; align-items: center; gap: 6px; }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
   .sync-dot.syncing { background: var(--gold); animation: pulse 1.2s infinite; }
@@ -122,16 +118,22 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; color: white; box-shadow: 0 4px 16px rgba(139,124,246,0.3); }
   .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,124,246,0.4); }
+  .btn-gold { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); border-color: transparent; color: #1a1000; font-weight: 700; box-shadow: 0 4px 16px rgba(251,191,36,0.25); }
+  .btn-gold:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(251,191,36,0.35); }
+  .btn-green { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); border-color: transparent; color: white; box-shadow: 0 4px 16px rgba(52,211,153,0.25); }
+  .btn-green:hover:not(:disabled) { transform: translateY(-1px); }
   .btn-block { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
   .btn-ghost { background: transparent; border-color: var(--border); }
   .btn-sm { padding: 6px 10px; font-size: 12px; }
+  .btn-danger { color: var(--red); }
 
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; font-weight: 500; }
   .field input, .field select, .field textarea { width: 100%; background: var(--bg-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 0.15s; }
-  .field textarea { resize: vertical; min-height: 140px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
+  .field textarea { resize: vertical; min-height: 120px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
   .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-hint { font-size: 11px; color: var(--text-mute); margin-top: 5px; }
 
   .missions { display: flex; flex-direction: column; gap: 8px; }
   .mission { background: var(--bg-1); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: all 0.2s; position: relative; overflow: hidden; }
@@ -151,6 +153,7 @@
   .tag-health { background: rgba(52,211,153,0.12); color: var(--green); }
   .tag-mind { background: rgba(244,114,182,0.12); color: var(--pink); }
   .tag-xp { background: rgba(251,191,36,0.12); color: var(--gold); }
+  .tag-coin { background: rgba(245,158,11,0.12); color: var(--coin); }
   .mission-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
   .mission:hover .mission-actions { opacity: 1; }
   .icon-btn { background: transparent; border: none; color: var(--text-mute); cursor: pointer; padding: 6px; border-radius: 6px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
@@ -158,27 +161,68 @@
   .icon-btn.delete:hover { color: var(--red); }
 
   .empty { text-align: center; padding: 40px 20px; color: var(--text-mute); font-size: 14px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; display: block; }
 
-  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.2s; }
-  .modal-bg.show { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .modal { background: var(--bg-1); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); max-height: 90vh; overflow-y: auto; }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  /* ---- Recompensas ---- */
+  .coin-display { background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(251,191,36,0.05) 100%); border: 1px solid rgba(245,158,11,0.25); border-radius: 16px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+  .coin-display-icon { font-size: 40px; line-height: 1; }
+  .coin-display-info { flex: 1; }
+  .coin-display-amount { font-size: 32px; font-weight: 800; color: var(--coin); line-height: 1; }
+  .coin-display-label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  .coin-display-hint { font-size: 12px; color: var(--text-mute); }
 
-  .toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
-  .toast { background: var(--bg-2); border: 1px solid var(--border-strong); padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow); min-width: 220px; text-align: center; animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .toast.xp { border-color: var(--gold); color: var(--gold); }
-  .toast.levelup { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; color: white; font-weight: 700; box-shadow: 0 12px 40px rgba(139,124,246,0.5); }
-  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  .toast.fade { opacity: 0; transition: opacity 0.4s; }
+  .rewards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .reward-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: 14px; padding: 18px; transition: all 0.2s; position: relative; }
+  .reward-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .reward-card.cant-afford { opacity: 0.55; }
+  .reward-emoji { font-size: 36px; margin-bottom: 10px; display: block; }
+  .reward-name { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .reward-cost { font-size: 13px; color: var(--coin); font-weight: 600; margin-bottom: 14px; }
+  .reward-actions { display: flex; gap: 6px; }
+  .reward-delete { position: absolute; top: 10px; right: 10px; opacity: 0; }
+  .reward-card:hover .reward-delete { opacity: 1; }
 
-  .tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border); }
-  .tab { flex: 1; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text-dim); transition: all 0.15s; background: transparent; border: none; font-family: inherit; }
-  .tab.active { background: var(--bg-3); color: var(--text); }
-  .tab:hover:not(.active) { color: var(--text); }
+  .suggestions-title { font-size: 13px; color: var(--text-mute); font-weight: 600; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 4px; }
+  .suggestion-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+  .suggestion-card:hover { border-color: var(--border-strong); }
+  .suggestion-emoji { font-size: 24px; flex-shrink: 0; }
+  .suggestion-info { flex: 1; min-width: 0; }
+  .suggestion-name { font-size: 13px; font-weight: 500; }
+  .suggestion-cost { font-size: 12px; color: var(--coin); }
 
+  .redemption-list { display: flex; flex-direction: column; gap: 6px; }
+  .redemption-item { background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .redemption-emoji { font-size: 20px; }
+  .redemption-info { flex: 1; }
+  .redemption-name { font-weight: 500; }
+  .redemption-date { font-size: 11px; color: var(--text-mute); }
+  .redemption-cost { font-size: 12px; color: var(--red); font-weight: 600; }
+
+  /* ---- Ahorro ---- */
+  .goals-list { display: flex; flex-direction: column; gap: 14px; }
+  .goal-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.2s; }
+  .goal-card:hover { border-color: var(--border-strong); }
+  .goal-card.completed { border-color: rgba(52,211,153,0.4); background: linear-gradient(135deg, rgba(52,211,153,0.05), transparent); }
+  .goal-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+  .goal-emoji { font-size: 38px; flex-shrink: 0; line-height: 1; }
+  .goal-info { flex: 1; min-width: 0; }
+  .goal-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .goal-badge-done { background: rgba(52,211,153,0.15); color: var(--green); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .goal-target { font-size: 13px; color: var(--text-dim); }
+  .goal-saved { font-size: 22px; font-weight: 800; color: var(--green); }
+  .goal-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .goal-progress { margin-bottom: 10px; }
+  .goal-bar-wrap { height: 10px; background: var(--bg-3); border-radius: 999px; overflow: hidden; margin-bottom: 6px; }
+  .goal-bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 999px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .goal-bar-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); }
+  .goal-bar-pct { font-weight: 700; color: var(--green); }
+  .goal-contributions { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+  .contrib-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .contrib-amount { font-weight: 600; color: var(--green); min-width: 80px; }
+  .contrib-note { color: var(--text-dim); flex: 1; }
+  .contrib-date { color: var(--text-mute); flex-shrink: 0; }
+
+  /* ---- Logros ---- */
   .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
   .ach { background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; transition: all 0.2s; opacity: 0.4; }
   .ach.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(135deg, rgba(251,191,36,0.08), transparent); }
@@ -186,9 +230,30 @@
   .ach-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
   .ach-desc { font-size: 10px; color: var(--text-mute); }
 
+  /* ---- Modal ---- */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.2s; }
+  .modal-bg.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal { background: var(--bg-1); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); max-height: 90vh; overflow-y: auto; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  .modal-info { background: var(--bg-2); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .modal-info b { color: var(--accent-2); }
+
+  /* ---- Tabs ---- */
+  .tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border); flex-wrap: wrap; }
+  .tab { flex: 1; min-width: fit-content; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text-dim); transition: all 0.15s; background: transparent; border: none; font-family: inherit; white-space: nowrap; }
+  .tab.active { background: var(--bg-3); color: var(--text); }
+  .tab:hover:not(.active) { color: var(--text); }
+
   .user-menu-btn { background: var(--bg-2); border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px 5px 5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-family: inherit; font-size: 12px; color: var(--text); transition: all 0.15s; }
   .user-menu-btn:hover { border-color: var(--border-strong); }
   .user-menu-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+  .setup-warn { background: rgba(139,124,246,0.08); border: 1px solid rgba(139,124,246,0.3); color: var(--text-dim); padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .setup-warn b { color: var(--accent-2); }
+  .setup-warn code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
 
   @media (max-width: 600px) {
     .app { padding: 16px 14px 100px; }
@@ -200,7 +265,20 @@
     .stats-grid { grid-template-columns: 1fr; }
     .section-head { flex-wrap: wrap; gap: 8px; }
     .auth-card { padding: 24px 20px; }
+    .rewards-grid { grid-template-columns: 1fr 1fr; }
+    .coin-display { flex-direction: column; text-align: center; }
+    .tabs { gap: 2px; }
+    .tab { padding: 8px 8px; font-size: 12px; }
   }
+
+  .toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast { background: var(--bg-2); border: 1px solid var(--border-strong); padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow); min-width: 220px; text-align: center; animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .toast.xp { border-color: var(--gold); color: var(--gold); }
+  .toast.coin { border-color: var(--coin); color: var(--coin); }
+  .toast.levelup { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; color: white; font-weight: 700; box-shadow: 0 12px 40px rgba(139,124,246,0.5); }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .toast.fade { opacity: 0; transition: opacity 0.4s; }
 </style>
 </head>
 <body>
@@ -210,37 +288,16 @@
   <div>Cargando Life Quest…</div>
 </div>
 
-<div id="setupScreen" class="screen-center" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo">⚔️ Life Quest</div>
-    <div class="auth-sub">Configura tu base de datos (solo una vez)</div>
-    <div class="setup-warn">
-      <b>📋 Pega tu config de Firebase</b><br>
-      Puedes pegar el bloque <b>completo</b> tal como te lo dio Firebase (con <code>const firebaseConfig = {...}</code> y todo). El parser limpia el resto solo.
-    </div>
-    <div class="auth-error" id="setupError"></div>
-    <div class="field">
-      <label>Configuración de Firebase</label>
-      <textarea id="firebaseConfigInput" placeholder='const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
-};'></textarea>
-    </div>
-    <button class="btn btn-primary btn-block" onclick="saveFirebaseConfig()">Guardar y continuar</button>
-    <div class="auth-foot">
-      ¿No tienes Firebase? Abre <code style="background:var(--bg-3);padding:2px 6px;border-radius:4px">DEPLOY.md</code> para la guía paso a paso.
-    </div>
-  </div>
-</div>
-
 <div id="authScreen" class="screen-center" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">⚔️ Life Quest</div>
-    <div class="auth-sub">Inicia sesión para guardar tu progreso en la nube</div>
+    <div class="auth-sub">Inicia sesión para guardar tu progreso</div>
+
+    <div class="config-banner" id="configBanner">
+      <p><b>Primer uso:</b> necesitas conectar tu base de datos de Firebase para guardar tu progreso en la nube.</p>
+      <button class="btn btn-primary btn-block" onclick="openConfigModal()">⚙️ Configurar Firebase</button>
+    </div>
+
     <div class="auth-tabs">
       <button class="auth-tab active" data-mode="login">Iniciar sesión</button>
       <button class="auth-tab" data-mode="signup">Crear cuenta</button>
@@ -268,6 +325,7 @@
     <div class="header-right">
       <span class="pill sync-pill" id="syncPill" title="Sincronización"><span class="sync-dot" id="syncDot"></span><span id="syncText">Sincronizado</span></span>
       <span class="pill streak" id="streakPill"><span class="icon">🔥</span><span id="streakNum">0</span> días</span>
+      <span class="pill coins-pill" id="coinsPill"><span class="icon">🪙</span><span id="coinsNum">0</span></span>
       <button class="user-menu-btn" onclick="openUserMenu()" id="userMenuBtn">
         <span class="user-menu-avatar" id="userMenuAvatar">E</span>
         <span id="userMenuEmail">…</span>
@@ -297,7 +355,6 @@
       </div>
       <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
     </div>
-
     <div class="stats-grid">
       <div class="stat stat-prod">
         <div class="stat-head">
@@ -326,13 +383,15 @@
   <div class="tabs">
     <button class="tab active" data-tab="daily">Misiones de hoy</button>
     <button class="tab" data-tab="custom">Mis misiones</button>
+    <button class="tab" data-tab="rewards">🪙 Recompensas</button>
+    <button class="tab" data-tab="savings">💰 Ahorro</button>
     <button class="tab" data-tab="achievements">Logros</button>
   </div>
 
   <div class="tab-content" id="tab-daily">
     <div class="section">
       <div class="section-head">
-        <div class="section-title">Misiones diarias <span class="section-sub" id="dailyProgress">0/0 completadas</span></div>
+        <div class="section-title">Misiones de hoy <span class="section-sub" id="dailyProgress">0/0 completadas</span></div>
         <button class="btn btn-ghost btn-sm" onclick="resetDaily()">↻ Reiniciar día</button>
       </div>
       <div class="missions" id="dailyList"></div>
@@ -349,6 +408,44 @@
     </div>
   </div>
 
+  <div class="tab-content" id="tab-rewards" style="display:none">
+    <div class="section">
+      <div class="coin-display">
+        <div class="coin-display-icon">🪙</div>
+        <div class="coin-display-info">
+          <div class="coin-display-amount" id="coinBalanceBig">0</div>
+          <div class="coin-display-label">monedas disponibles</div>
+          <div class="coin-display-hint">Ganas monedas al completar misiones. ¡Úsalas para premiarte!</div>
+        </div>
+      </div>
+      <div class="section-head">
+        <div class="section-title">Mis recompensas <span class="section-sub" id="rewardCount"></span></div>
+        <button class="btn btn-primary btn-sm" onclick="openRewardModal()">+ Nueva recompensa</button>
+      </div>
+      <div class="rewards-grid" id="rewardsList"></div>
+      <div id="suggestionsSection">
+        <div class="suggestions-title">Sugerencias para empezar</div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="suggestionsList"></div>
+      </div>
+      <div id="redemptionsSection" style="display:none">
+        <div class="section-head" style="margin-top:20px">
+          <div class="section-title">Últimas redenciones</div>
+        </div>
+        <div class="redemption-list" id="redemptionsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-savings" style="display:none">
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Mis metas de ahorro</div>
+        <button class="btn btn-primary btn-sm" onclick="openGoalModal()">+ Nueva meta</button>
+      </div>
+      <div class="goals-list" id="goalsList"></div>
+    </div>
+  </div>
+
   <div class="tab-content" id="tab-achievements" style="display:none">
     <div class="section">
       <div class="section-head">
@@ -359,6 +456,7 @@
   </div>
 </div>
 
+<!-- Modal: Nueva misión -->
 <div class="modal-bg" id="missionModal">
   <div class="modal">
     <div class="modal-title" id="modalTitle">Nueva misión</div>
@@ -376,12 +474,12 @@
         </select>
       </div>
       <div class="field">
-        <label>Dificultad (XP)</label>
+        <label>Dificultad (XP + monedas)</label>
         <select id="mXp">
-          <option value="10">Fácil (10 XP)</option>
-          <option value="25" selected>Media (25 XP)</option>
-          <option value="50">Difícil (50 XP)</option>
-          <option value="100">Épica (100 XP)</option>
+          <option value="10">Fácil (10)</option>
+          <option value="25" selected>Media (25)</option>
+          <option value="50">Difícil (50)</option>
+          <option value="100">Épica (100)</option>
         </select>
       </div>
     </div>
@@ -399,6 +497,113 @@
   </div>
 </div>
 
+<!-- Modal: Nueva recompensa -->
+<div class="modal-bg" id="rewardModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">Nueva recompensa</div>
+    <div class="modal-info">Define algo con lo que premiarte cuando acumules suficientes 🪙 monedas.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Emoji</label>
+        <input type="text" id="rEmoji" placeholder="🎬" maxlength="4">
+      </div>
+      <div class="field">
+        <label>Costo en 🪙 monedas</label>
+        <input type="number" id="rCost" placeholder="100" min="1" max="99999">
+      </div>
+    </div>
+    <div class="field">
+      <label>Nombre de la recompensa</label>
+      <input type="text" id="rTitle" placeholder="Ej: Ver una película sin culpa" maxlength="60">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeRewardModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveReward()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nueva meta de ahorro -->
+<div class="modal-bg" id="goalModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">Nueva meta de ahorro</div>
+    <div class="modal-info">Define para qué quieres ahorrar y lleva el registro de tu progreso aquí.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Emoji</label>
+        <input type="text" id="gEmoji" placeholder="📱" maxlength="4">
+      </div>
+      <div class="field">
+        <label>Moneda</label>
+        <select id="gCurrency">
+          <option value="COP">COP (pesos)</option>
+          <option value="USD">USD (dólares)</option>
+          <option value="EUR">EUR (euros)</option>
+          <option value="MXN">MXN (pesos mex)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>¿Para qué estás ahorrando?</label>
+      <input type="text" id="gTitle" placeholder="Ej: iPhone nuevo, Viaje a Cartagena…" maxlength="60">
+    </div>
+    <div class="field">
+      <label>Precio objetivo</label>
+      <input type="number" id="gTarget" placeholder="0" min="1">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeGoalModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveGoal()">Crear meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Añadir aportación -->
+<div class="modal-bg" id="contributionModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title" id="contributionTitle">Añadir aportación</div>
+    <div class="field">
+      <label>¿Cuánto ahorraste?</label>
+      <input type="number" id="contributionAmount" placeholder="0" min="1">
+    </div>
+    <div class="field">
+      <label>Nota (opcional)</label>
+      <input type="text" id="contributionNote" placeholder="Ej: Sueldo de la semana, recorté gastos…" maxlength="50">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeContributionModal()">Cancelar</button>
+      <button class="btn btn-green" onclick="saveContribution()">Añadir aportación</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Configuración Firebase -->
+<div class="modal-bg" id="configModal">
+  <div class="modal">
+    <div class="modal-title">⚙️ Configuración de Firebase</div>
+    <div class="setup-warn">
+      <b>📋 Pega tu config de Firebase</b> — puedes pegar el bloque completo tal como te lo dio Firebase (con <code>const firebaseConfig = {...}</code>). Tu configuración se guarda solo en tu navegador y <b>nunca se sube al repositorio</b>.
+    </div>
+    <div class="auth-error" id="configError"></div>
+    <div class="field">
+      <label>Configuración de Firebase</label>
+      <textarea id="firebaseConfigInput" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "tu-proyecto.firebaseapp.com",
+  projectId: "tu-proyecto",
+  storageBucket: "tu-proyecto.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};'></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeConfigModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveFirebaseConfig()">Guardar y conectar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Menú usuario -->
 <div class="modal-bg" id="userMenuModal">
   <div class="modal" style="max-width:380px">
     <div class="modal-title">Tu cuenta</div>
@@ -409,7 +614,8 @@
     <button class="btn btn-block" onclick="exportData()" style="margin-bottom:8px">📥 Exportar respaldo</button>
     <button class="btn btn-block" onclick="document.getElementById('importFile').click()" style="margin-bottom:8px">📤 Importar respaldo</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn btn-block" onclick="logout()" style="color:var(--red)">Cerrar sesión</button>
+    <button class="btn btn-block" onclick="closeUserMenu();openConfigModal()" style="margin-bottom:8px">⚙️ Configuración Firebase</button>
+    <button class="btn btn-block btn-danger" onclick="logout()">Cerrar sesión</button>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeUserMenu()">Cerrar</button>
     </div>
@@ -429,21 +635,25 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const FBKEY = 'lifeQuest_firebaseConfig';
-
 let app, auth, db;
 let currentUser = null;
 let unsubscribeSnapshot = null;
 let saveTimeout = null;
 let isApplyingRemote = false;
 let state = defaultState();
+let activeGoalId = null;
 
 function defaultState() {
   return {
-    name: 'Aventurera', xp: 0, statXp: { prod: 0, health: 0, mind: 0 },
+    name: 'Aventurera', xp: 0, coins: 0,
+    statXp: { prod: 0, health: 0, mind: 0 },
     streak: 0, lastActiveDate: null, achievements: {},
     customMissions: [], presetCompletedToday: {},
     customCompletedToday: {}, customCompletedOnce: {},
-    dailyResetDate: null, _totalEverCompleted: 0
+    dailyResetDate: null, _totalEverCompleted: 0,
+    rewards: [],
+    redeemedRewards: [],
+    savingsGoals: []
   };
 }
 
@@ -462,19 +672,37 @@ const PRESETS = [
   { id: 'p12', title: 'Planear el día por la mañana', cat: 'prod', xp: 15 }
 ];
 
+const SUGGESTED_REWARDS = [
+  { emoji: '🎬', title: 'Ver una película sin culpa', cost: 100 },
+  { emoji: '🍕', title: 'Pedir comida favorita', cost: 200 },
+  { emoji: '🛁', title: 'Baño relajante con música', cost: 50 },
+  { emoji: '🎮', title: '2 horas de videojuegos', cost: 150 },
+  { emoji: '☕', title: 'Café especial o snack favorito', cost: 75 },
+  { emoji: '📚', title: 'Tarde libre de lectura', cost: 120 },
+  { emoji: '💅', title: 'Sesión de autocuidado', cost: 180 },
+  { emoji: '🛍️', title: 'Compra pequeña sin culpa', cost: 300 },
+];
+
 const ACHIEVEMENTS = [
   { id: 'first', emoji: '🌱', title: 'Primer Paso', desc: 'Completa tu primera misión', check: s => totalCompleted() >= 1 },
   { id: 'lvl5', emoji: '⭐', title: 'Aventurera', desc: 'Alcanza el nivel 5', check: s => calcLevel(s.xp) >= 5 },
   { id: 'lvl10', emoji: '💫', title: 'Veterana', desc: 'Alcanza el nivel 10', check: s => calcLevel(s.xp) >= 10 },
   { id: 'lvl25', emoji: '👑', title: 'Maestra', desc: 'Alcanza el nivel 25', check: s => calcLevel(s.xp) >= 25 },
-  { id: 'streak3', emoji: '🔥', title: 'En racha', desc: 'Mantén una racha de 3 días', check: s => s.streak >= 3 },
-  { id: 'streak7', emoji: '⚡', title: 'Imparable', desc: 'Mantén una racha de 7 días', check: s => s.streak >= 7 },
+  { id: 'streak3', emoji: '🔥', title: 'En racha', desc: 'Racha de 3 días', check: s => s.streak >= 3 },
+  { id: 'streak7', emoji: '⚡', title: 'Imparable', desc: 'Racha de 7 días', check: s => s.streak >= 7 },
   { id: 'streak30', emoji: '🏆', title: 'Leyenda', desc: 'Racha de 30 días', check: s => s.streak >= 30 },
   { id: 'balance', emoji: '☯️', title: 'Equilibrio', desc: 'Sube las 3 stats al nivel 3', check: s => calcLevel(s.statXp.prod) >= 3 && calcLevel(s.statXp.health) >= 3 && calcLevel(s.statXp.mind) >= 3 },
-  { id: 'prodMax', emoji: '⚡', title: 'Productividad++', desc: 'Sube Productividad al nivel 10', check: s => calcLevel(s.statXp.prod) >= 10 },
-  { id: 'healthMax', emoji: '💪', title: 'Atlética', desc: 'Sube Salud al nivel 10', check: s => calcLevel(s.statXp.health) >= 10 },
-  { id: 'mindMax', emoji: '🧠', title: 'Sabia', desc: 'Sube Mente al nivel 10', check: s => calcLevel(s.statXp.mind) >= 10 },
-  { id: 'custom5', emoji: '✨', title: 'Arquitecta', desc: 'Crea 5 misiones personalizadas', check: s => s.customMissions.length >= 5 }
+  { id: 'prodMax', emoji: '⚡', title: 'Productividad++', desc: 'Productividad al nivel 10', check: s => calcLevel(s.statXp.prod) >= 10 },
+  { id: 'healthMax', emoji: '💪', title: 'Atlética', desc: 'Salud al nivel 10', check: s => calcLevel(s.statXp.health) >= 10 },
+  { id: 'mindMax', emoji: '🧠', title: 'Sabia', desc: 'Mente al nivel 10', check: s => calcLevel(s.statXp.mind) >= 10 },
+  { id: 'custom5', emoji: '✨', title: 'Arquitecta', desc: 'Crea 5 misiones personalizadas', check: s => s.customMissions.length >= 5 },
+  { id: 'firstRedeem', emoji: '🪙', title: 'Primera Redención', desc: 'Redime tu primera recompensa', check: s => (s.redeemedRewards||[]).length >= 1 },
+  { id: 'redeem5', emoji: '🏪', title: 'Compradora', desc: 'Redime 5 recompensas', check: s => (s.redeemedRewards||[]).length >= 5 },
+  { id: 'coins500', emoji: '💰', title: 'Ahorradora', desc: 'Acumula 500 monedas de golpe', check: s => s.coins >= 500 },
+  { id: 'coins1000', emoji: '💎', title: 'Millonaria', desc: 'Acumula 1000 monedas', check: s => s.coins >= 1000 },
+  { id: 'firstGoal', emoji: '🎯', title: 'Con propósito', desc: 'Crea tu primera meta de ahorro', check: s => (s.savingsGoals||[]).length >= 1 },
+  { id: 'goalDone', emoji: '🏁', title: 'Meta cumplida', desc: 'Completa una meta de ahorro', check: s => (s.savingsGoals||[]).some(g => g.saved >= g.target) },
+  { id: 'goals3', emoji: '🚀', title: 'Soñadora', desc: 'Crea 3 metas de ahorro', check: s => (s.savingsGoals||[]).length >= 3 },
 ];
 
 function calcLevel(xp) { return Math.floor(Math.sqrt(xp / 50)) + 1; }
@@ -491,13 +719,34 @@ function totalCompleted() {
   Object.values(state.customCompletedOnce).forEach(v => v && n++);
   return n;
 }
-function escapeHtml(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function formatMoney(amount, currency) {
+  try {
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount);
+  } catch(e) {
+    return currency + ' ' + amount.toLocaleString('es-CO');
+  }
+}
 
+// ====== BOOTSTRAP ======
 function bootstrap() {
   const cfg = localStorage.getItem(FBKEY);
-  if (!cfg) { showSetup(); return; }
+  if (!cfg) {
+    document.getElementById('initLoader').style.display = 'none';
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('configBanner').style.display = 'block';
+    return;
+  }
   try { initFirebase(JSON.parse(cfg)); }
-  catch (e) { console.error(e); localStorage.removeItem(FBKEY); showSetup(); }
+  catch (e) {
+    console.error(e);
+    localStorage.removeItem(FBKEY);
+    document.getElementById('initLoader').style.display = 'none';
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('configBanner').style.display = 'block';
+  }
 }
 
 function initFirebase(cfg) {
@@ -509,8 +758,9 @@ function initFirebase(cfg) {
   } catch (e) {
     console.error(e);
     document.getElementById('initLoader').style.display = 'none';
-    showSetup();
-    setError('setupError', 'Error inicializando Firebase: ' + e.message);
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('configBanner').style.display = 'block';
+    setConfigError('Error inicializando Firebase: ' + e.message);
   }
 }
 
@@ -523,51 +773,50 @@ function handleAuthChange(user) {
   } else {
     currentUser = null;
     if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
-    showAuth();
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('configBanner').style.display = 'none';
   }
 }
 
-function hideAll() {
-  document.getElementById('initLoader').style.display = 'none';
-  document.getElementById('setupScreen').style.display = 'none';
-  document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'none';
-}
-function showSetup() { hideAll(); document.getElementById('setupScreen').style.display = 'flex'; }
-function showAuth() { hideAll(); document.getElementById('authScreen').style.display = 'flex'; }
 function showMainApp() {
-  hideAll();
+  document.getElementById('authScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = 'block';
   document.getElementById('userMenuEmail').textContent = currentUser.email;
   document.getElementById('accountEmail').textContent = currentUser.email;
   document.getElementById('userMenuAvatar').textContent = (currentUser.email || '?').charAt(0).toUpperCase();
 }
 
-function setError(id, msg) {
-  const el = document.getElementById(id);
-  if (msg) { el.textContent = msg; el.classList.add('show'); }
-  else { el.textContent = ''; el.classList.remove('show'); }
-}
-function setSuccess(msg) {
-  const el = document.getElementById('authSuccess');
-  if (msg) { el.textContent = msg; el.classList.add('show'); }
-  else { el.textContent = ''; el.classList.remove('show'); }
-}
-
-// ====== SETUP — parser robusto ======
-window.saveFirebaseConfig = function() {
-  setError('setupError', '');
-  let txt = document.getElementById('firebaseConfigInput').value.trim();
-  if (!txt) { setError('setupError', 'Pega tu config de Firebase'); return; }
-
-  // Encontrar el primer { y su llave de cierre, ignorando llaves dentro de strings
-  const firstBrace = txt.indexOf('{');
-  if (firstBrace === -1) {
-    setError('setupError', 'No encontré ningún { en el texto. Pega el objeto completo con sus llaves.');
-    return;
+// ====== CONFIG MODAL ======
+window.openConfigModal = function() {
+  const existing = localStorage.getItem(FBKEY);
+  if (existing) {
+    try {
+      const cfg = JSON.parse(existing);
+      document.getElementById('firebaseConfigInput').value = JSON.stringify(cfg, null, 2);
+    } catch(e) {}
+  } else {
+    document.getElementById('firebaseConfigInput').value = '';
   }
-  let depth = 0, lastBrace = -1;
-  let inString = false, stringChar = '';
+  setConfigError('');
+  document.getElementById('configModal').classList.add('show');
+};
+window.closeConfigModal = function() { document.getElementById('configModal').classList.remove('show'); };
+
+function setConfigError(msg) {
+  const el = document.getElementById('configError');
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+
+window.saveFirebaseConfig = function() {
+  setConfigError('');
+  let txt = document.getElementById('firebaseConfigInput').value.trim();
+  if (!txt) { setConfigError('Pega tu config de Firebase'); return; }
+
+  const firstBrace = txt.indexOf('{');
+  if (firstBrace === -1) { setConfigError('No encontré ningún { en el texto.'); return; }
+  let depth = 0, lastBrace = -1, inString = false, stringChar = '';
   for (let i = firstBrace; i < txt.length; i++) {
     const ch = txt[i];
     if (inString) {
@@ -579,31 +828,21 @@ window.saveFirebaseConfig = function() {
       else if (ch === '}') { depth--; if (depth === 0) { lastBrace = i; break; } }
     }
   }
-  if (lastBrace === -1) {
-    setError('setupError', 'Falta la llave de cierre }. Asegúrate de copiar el objeto completo.');
-    return;
-  }
+  if (lastBrace === -1) { setConfigError('Falta la llave de cierre }. Copia el objeto completo.'); return; }
   const objText = txt.substring(firstBrace, lastBrace + 1);
-
   let cfg;
-  try {
-    // 1) Intentar como JSON estricto
-    cfg = JSON.parse(objText);
-  } catch (e) {
-    try {
-      // 2) Intentar como objeto JavaScript (lo que da Firebase: claves sin comillas, comillas simples, etc.)
-      cfg = (new Function('return (' + objText + ')'))();
-    } catch (e2) {
-      setError('setupError', 'No se pudo leer el config. Detalle: ' + e2.message);
-      return;
-    }
+  try { cfg = JSON.parse(objText); }
+  catch (e) {
+    try { cfg = (new Function('return (' + objText + ')'))(); }
+    catch (e2) { setConfigError('No se pudo leer el config: ' + e2.message); return; }
   }
-  if (!cfg || typeof cfg !== 'object') { setError('setupError', 'El config no es un objeto válido.'); return; }
-  if (!cfg.apiKey || !cfg.projectId) { setError('setupError', 'Falta apiKey o projectId en el config.'); return; }
+  if (!cfg || typeof cfg !== 'object') { setConfigError('El config no es un objeto válido.'); return; }
+  if (!cfg.apiKey || !cfg.projectId) { setConfigError('Falta apiKey o projectId en el config.'); return; }
 
   localStorage.setItem(FBKEY, JSON.stringify(cfg));
+  closeConfigModal();
   document.getElementById('initLoader').style.display = 'flex';
-  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'none';
   initFirebase(cfg);
 };
 
@@ -619,6 +858,17 @@ document.querySelectorAll('.auth-tab').forEach(t => {
   });
 });
 
+function setError(id, msg) {
+  const el = document.getElementById(id);
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+function setSuccess(msg) {
+  const el = document.getElementById('authSuccess');
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+
 window.handleAuth = async function() {
   setError('authError',''); setSuccess('');
   const email = document.getElementById('authEmail').value.trim();
@@ -633,7 +883,7 @@ window.handleAuth = async function() {
     else await createUserWithEmailAndPassword(auth, email, password);
   } catch (e) {
     let msg = e.message;
-    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') msg = 'Email o contraseña incorrectos.';
+    if (['auth/invalid-credential','auth/wrong-password','auth/user-not-found'].includes(e.code)) msg = 'Email o contraseña incorrectos.';
     else if (e.code === 'auth/email-already-in-use') msg = 'Este email ya está registrado. Inicia sesión.';
     else if (e.code === 'auth/invalid-email') msg = 'Email inválido.';
     else if (e.code === 'auth/weak-password') msg = 'Contraseña muy débil.';
@@ -677,7 +927,6 @@ async function subscribeToData() {
     render();
     checkAchievements();
     setSyncStatus('ok', 'Sincronizado');
-
     unsubscribeSnapshot = onSnapshot(ref, (s) => {
       if (!s.exists()) return;
       const d = s.data();
@@ -715,6 +964,7 @@ function setSyncStatus(status, text) {
   txt.textContent = text;
 }
 
+// ====== DAILY RESET ======
 function checkDailyReset() {
   const today = todayStr();
   if (state.dailyResetDate !== today) {
@@ -736,7 +986,7 @@ function checkDailyReset() {
 }
 
 window.resetDaily = function() {
-  if (!confirm('¿Reiniciar las misiones diarias? Las que tenías completadas se desmarcarán.')) return;
+  if (!confirm('¿Reiniciar las misiones diarias? Las completadas se desmarcarán.')) return;
   state.presetCompletedToday = {};
   state.customCompletedToday = {};
   saveStateRemote();
@@ -744,16 +994,18 @@ window.resetDaily = function() {
   toast('Día reiniciado', '');
 };
 
+// ====== TOAST ======
 function toast(msg, type='') {
   const wrap = document.getElementById('toastWrap');
   const t = document.createElement('div');
   t.className = 'toast ' + type;
   t.textContent = msg;
   wrap.appendChild(t);
-  setTimeout(() => t.classList.add('fade'), 2000);
-  setTimeout(() => t.remove(), 2500);
+  setTimeout(() => t.classList.add('fade'), 2200);
+  setTimeout(() => t.remove(), 2700);
 }
 
+// ====== MISSIONS ======
 window.toggleMission = function(id, isPreset, isOnce=false) {
   const map = isOnce ? state.customCompletedOnce : (isPreset ? state.presetCompletedToday : state.customCompletedToday);
   const wasCompleted = !!map[id];
@@ -762,16 +1014,18 @@ window.toggleMission = function(id, isPreset, isOnce=false) {
   if (wasCompleted) {
     delete map[id];
     state.xp = Math.max(0, state.xp - mission.xp);
+    state.coins = Math.max(0, (state.coins || 0) - mission.xp);
     state.statXp[mission.cat] = Math.max(0, state.statXp[mission.cat] - mission.xp);
   } else {
     map[id] = true;
     const oldLevel = calcLevel(state.xp);
     state.xp += mission.xp;
+    state.coins = (state.coins || 0) + mission.xp;
     state.statXp[mission.cat] += mission.xp;
     state.lastActiveDate = todayStr();
     const newLevel = calcLevel(state.xp);
-    toast(`+${mission.xp} XP`, 'xp');
-    if (newLevel > oldLevel) setTimeout(() => toast(`🎉 ¡Subiste al nivel ${newLevel}!`, 'levelup'), 300);
+    toast(`+${mission.xp} XP  +${mission.xp} 🪙`, 'xp');
+    if (newLevel > oldLevel) setTimeout(() => toast(`🎉 ¡Subiste al nivel ${newLevel}!`, 'levelup'), 350);
   }
   saveStateRemote();
   render();
@@ -787,19 +1041,150 @@ window.deleteMission = function(id) {
   render();
 };
 
+// ====== REWARDS ======
+window.openRewardModal = function() {
+  document.getElementById('rEmoji').value = '';
+  document.getElementById('rTitle').value = '';
+  document.getElementById('rCost').value = '';
+  document.getElementById('rewardModal').classList.add('show');
+  setTimeout(() => document.getElementById('rEmoji').focus(), 100);
+};
+window.closeRewardModal = function() { document.getElementById('rewardModal').classList.remove('show'); };
+
+window.saveReward = function() {
+  const emoji = document.getElementById('rEmoji').value.trim() || '🎁';
+  const title = document.getElementById('rTitle').value.trim();
+  const cost = parseInt(document.getElementById('rCost').value);
+  if (!title) { toast('Escribe el nombre de la recompensa'); return; }
+  if (!cost || cost < 1) { toast('El costo debe ser al menos 1 moneda'); return; }
+  if (!state.rewards) state.rewards = [];
+  state.rewards.push({ id: 'r' + Date.now(), emoji, title, cost });
+  saveStateRemote();
+  render();
+  closeRewardModal();
+  toast('Recompensa creada ✓', 'xp');
+};
+
+window.deleteReward = function(id) {
+  if (!confirm('¿Eliminar esta recompensa?')) return;
+  state.rewards = (state.rewards || []).filter(r => r.id !== id);
+  saveStateRemote();
+  render();
+};
+
+window.redeemReward = function(id) {
+  const r = (state.rewards || []).find(r => r.id === id);
+  if (!r) return;
+  if ((state.coins || 0) < r.cost) { toast('No tienes suficientes monedas 🪙'); return; }
+  if (!confirm(`¿Redimir "${r.title}" por ${r.cost} 🪙?`)) return;
+  state.coins = (state.coins || 0) - r.cost;
+  if (!state.redeemedRewards) state.redeemedRewards = [];
+  state.redeemedRewards.unshift({ id: r.id, emoji: r.emoji, title: r.title, cost: r.cost, date: todayStr() });
+  if (state.redeemedRewards.length > 20) state.redeemedRewards = state.redeemedRewards.slice(0, 20);
+  saveStateRemote();
+  render();
+  checkAchievements();
+  toast(`${r.emoji} ¡${r.title} desbloqueado!`, 'levelup');
+};
+
+window.addSuggestion = function(idx) {
+  const s = SUGGESTED_REWARDS[idx];
+  if (!s) return;
+  if (!state.rewards) state.rewards = [];
+  state.rewards.push({ id: 'r' + Date.now(), emoji: s.emoji, title: s.title, cost: s.cost });
+  saveStateRemote();
+  render();
+  toast('Recompensa añadida ✓', 'xp');
+};
+
+// ====== SAVINGS GOALS ======
+window.openGoalModal = function() {
+  document.getElementById('gEmoji').value = '';
+  document.getElementById('gTitle').value = '';
+  document.getElementById('gTarget').value = '';
+  document.getElementById('gCurrency').value = 'COP';
+  document.getElementById('goalModal').classList.add('show');
+  setTimeout(() => document.getElementById('gEmoji').focus(), 100);
+};
+window.closeGoalModal = function() { document.getElementById('goalModal').classList.remove('show'); };
+
+window.saveGoal = function() {
+  const emoji = document.getElementById('gEmoji').value.trim() || '🎯';
+  const title = document.getElementById('gTitle').value.trim();
+  const target = parseFloat(document.getElementById('gTarget').value);
+  const currency = document.getElementById('gCurrency').value;
+  if (!title) { toast('Escribe para qué estás ahorrando'); return; }
+  if (!target || target < 1) { toast('Escribe un precio objetivo'); return; }
+  if (!state.savingsGoals) state.savingsGoals = [];
+  state.savingsGoals.push({ id: 'g' + Date.now(), emoji, title, target, currency, saved: 0, contributions: [], createdAt: todayStr() });
+  saveStateRemote();
+  render();
+  closeGoalModal();
+  checkAchievements();
+  toast('¡Meta de ahorro creada! 🎯', 'success');
+};
+
+window.deleteGoal = function(id) {
+  if (!confirm('¿Eliminar esta meta de ahorro? Se perderá el progreso registrado.')) return;
+  state.savingsGoals = (state.savingsGoals || []).filter(g => g.id !== id);
+  saveStateRemote();
+  render();
+};
+
+window.openContributionModal = function(id) {
+  const g = (state.savingsGoals || []).find(g => g.id === id);
+  if (!g) return;
+  activeGoalId = id;
+  document.getElementById('contributionTitle').textContent = `Aportación a: ${g.emoji} ${g.title}`;
+  document.getElementById('contributionAmount').value = '';
+  document.getElementById('contributionNote').value = '';
+  document.getElementById('contributionModal').classList.add('show');
+  setTimeout(() => document.getElementById('contributionAmount').focus(), 100);
+};
+window.closeContributionModal = function() {
+  document.getElementById('contributionModal').classList.remove('show');
+  activeGoalId = null;
+};
+
+window.saveContribution = function() {
+  const amount = parseFloat(document.getElementById('contributionAmount').value);
+  const note = document.getElementById('contributionNote').value.trim();
+  if (!amount || amount < 1) { toast('Escribe un monto válido'); return; }
+  const goals = state.savingsGoals || [];
+  const g = goals.find(g => g.id === activeGoalId);
+  if (!g) return;
+  const wasCompleted = g.saved >= g.target;
+  g.saved = (g.saved || 0) + amount;
+  if (!g.contributions) g.contributions = [];
+  g.contributions.push({ date: todayStr(), amount, note });
+  const nowCompleted = g.saved >= g.target;
+  saveStateRemote();
+  render();
+  closeContributionModal();
+  checkAchievements();
+  if (!wasCompleted && nowCompleted) {
+    setTimeout(() => toast(`🏁 ¡Meta "${g.title}" completada! 🎉`, 'levelup'), 300);
+  } else {
+    const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
+    toast(`+${formatMoney(amount, g.currency)} aportados — ${pct}% logrado 💚`, 'success');
+  }
+};
+
+// ====== ACHIEVEMENTS ======
 function checkAchievements() {
   let unlocked = false;
   ACHIEVEMENTS.forEach(a => {
     if (!state.achievements[a.id] && a.check(state)) {
       state.achievements[a.id] = true;
       unlocked = true;
-      setTimeout(() => toast(`🏆 Logro desbloqueado: ${a.title}`, 'levelup'), 600);
+      setTimeout(() => toast(`🏆 Logro: ${a.title}`, 'levelup'), 600);
     }
   });
   if (unlocked) saveStateRemote();
   renderAchievements();
 }
 
+// ====== RENDER ======
 function render() {
   checkDailyReset();
   document.getElementById('charName').textContent = state.name;
@@ -817,21 +1202,25 @@ function render() {
   document.getElementById('xpRemain').textContent = (xpNeeded - xpInLevel) + ' XP para subir';
 
   const classNames = ['Aprendiz', 'Aventurera', 'Exploradora', 'Guerrera', 'Heroína', 'Veterana', 'Maestra', 'Leyenda'];
-  const classIdx = Math.min(classNames.length - 1, Math.floor(lvl / 5));
-  document.getElementById('charClass').textContent = `${classNames[classIdx]} Nivel ${lvl}`;
+  document.getElementById('charClass').textContent = `${classNames[Math.min(classNames.length-1, Math.floor(lvl/5))]} Nivel ${lvl}`;
 
   ['prod','health','mind'].forEach(cat => {
     const sLvl = calcLevel(state.statXp[cat]);
-    const sStart = xpForLevel(sLvl);
-    const sEnd = xpForNextLevel(sLvl);
+    const sStart = xpForLevel(sLvl), sEnd = xpForNextLevel(sLvl);
     const sPct = Math.min(100, ((state.statXp[cat] - sStart) / (sEnd - sStart)) * 100);
     document.getElementById(cat + 'Lvl').textContent = sLvl;
     document.getElementById(cat + 'Fill').style.width = sPct + '%';
   });
 
   document.getElementById('streakNum').textContent = state.streak;
+  const coins = state.coins || 0;
+  document.getElementById('coinsNum').textContent = coins.toLocaleString('es-CO');
+  document.getElementById('coinBalanceBig').textContent = coins.toLocaleString('es-CO');
+
   renderDailyMissions();
   renderCustomMissions();
+  renderRewards();
+  renderSavings();
   renderAchievements();
 }
 
@@ -839,8 +1228,7 @@ function renderDailyMissions() {
   const list = document.getElementById('dailyList');
   list.innerHTML = '';
   const dailyCustom = state.customMissions.filter(m => m.type === 'daily');
-  let total = PRESETS.length + dailyCustom.length;
-  let done = 0;
+  let total = PRESETS.length + dailyCustom.length, done = 0;
   PRESETS.forEach(m => {
     const completed = !!state.presetCompletedToday[m.id];
     if (completed) done++;
@@ -858,7 +1246,7 @@ function renderCustomMissions() {
   const list = document.getElementById('customList');
   list.innerHTML = '';
   if (state.customMissions.length === 0) {
-    list.innerHTML = '<div class="empty">Aún no has creado misiones personalizadas.<br>Toca "+ Nueva misión" para empezar.</div>';
+    list.innerHTML = '<div class="empty"><span class="empty-icon">✨</span>Aún no has creado misiones personalizadas.<br>Toca "+ Nueva misión" para empezar.</div>';
     return;
   }
   state.customMissions.forEach(m => {
@@ -872,7 +1260,6 @@ function missionEl(m, completed, isPreset, isOnce, showDelete=false) {
   const div = document.createElement('div');
   div.className = 'mission' + (completed ? ' done' : '');
   const catLabels = { prod: '⚡ Productividad', health: '💪 Salud', mind: '🧠 Mente' };
-  const typeLabel = m.type === 'once' ? '🎯 Única' : '';
   div.innerHTML = `
     <button class="check" aria-label="Completar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
     <div class="mission-body">
@@ -880,7 +1267,8 @@ function missionEl(m, completed, isPreset, isOnce, showDelete=false) {
       <div class="mission-meta">
         <span class="tag tag-${m.cat}">${catLabels[m.cat]}</span>
         <span class="tag tag-xp">+${m.xp} XP</span>
-        ${typeLabel ? `<span style="color:var(--text-mute)">${typeLabel}</span>` : ''}
+        <span class="tag tag-coin">+${m.xp} 🪙</span>
+        ${isOnce ? '<span style="color:var(--text-mute)">🎯 Única</span>' : ''}
       </div>
     </div>
     ${showDelete ? `<div class="mission-actions"><button class="icon-btn delete" aria-label="Eliminar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button></div>` : ''}
@@ -888,6 +1276,134 @@ function missionEl(m, completed, isPreset, isOnce, showDelete=false) {
   div.querySelector('.check').addEventListener('click', () => toggleMission(m.id, isPreset, isOnce));
   if (showDelete) div.querySelector('.delete').addEventListener('click', (e) => { e.stopPropagation(); deleteMission(m.id); });
   return div;
+}
+
+function renderRewards() {
+  const rewards = state.rewards || [];
+  const coins = state.coins || 0;
+  const container = document.getElementById('rewardsList');
+  const sugSection = document.getElementById('suggestionsSection');
+  const redemSection = document.getElementById('redemptionsSection');
+  container.innerHTML = '';
+  document.getElementById('rewardCount').textContent = rewards.length ? `${rewards.length} creadas` : '';
+
+  if (rewards.length === 0) {
+    container.innerHTML = '<div class="empty"><span class="empty-icon">🎁</span>Aún no tienes recompensas. Crea una o añade una sugerencia.</div>';
+  } else {
+    rewards.forEach(r => {
+      const canAfford = coins >= r.cost;
+      const card = document.createElement('div');
+      card.className = 'reward-card' + (canAfford ? '' : ' cant-afford');
+      card.innerHTML = `
+        <button class="icon-btn delete reward-delete" onclick="deleteReward('${r.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>
+        <span class="reward-emoji">${escapeHtml(r.emoji)}</span>
+        <div class="reward-name">${escapeHtml(r.title)}</div>
+        <div class="reward-cost">🪙 ${r.cost.toLocaleString('es-CO')} monedas</div>
+        <div class="reward-actions">
+          <button class="btn btn-gold btn-sm" onclick="redeemReward('${r.id}')" ${canAfford ? '' : 'disabled'}>
+            ${canAfford ? '✨ Redimir' : `Faltan ${(r.cost - coins).toLocaleString('es-CO')} 🪙`}
+          </button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // Sugerencias: solo si no tiene todas añadidas
+  const usedTitles = new Set(rewards.map(r => r.title));
+  const available = SUGGESTED_REWARDS.filter(s => !usedTitles.has(s.title));
+  sugSection.style.display = available.length ? 'block' : 'none';
+  if (available.length) {
+    const sugList = document.getElementById('suggestionsList');
+    sugList.innerHTML = '';
+    available.forEach((s, idx) => {
+      const origIdx = SUGGESTED_REWARDS.indexOf(s);
+      const item = document.createElement('div');
+      item.className = 'suggestion-card';
+      item.innerHTML = `
+        <span class="suggestion-emoji">${s.emoji}</span>
+        <div class="suggestion-info">
+          <div class="suggestion-name">${escapeHtml(s.title)}</div>
+          <div class="suggestion-cost">🪙 ${s.cost} monedas</div>
+        </div>
+        <button class="btn btn-sm" onclick="addSuggestion(${origIdx})">+ Añadir</button>
+      `;
+      sugList.appendChild(item);
+    });
+  }
+
+  // Redenciones
+  const redeemed = state.redeemedRewards || [];
+  redemSection.style.display = redeemed.length ? 'block' : 'none';
+  if (redeemed.length) {
+    const redList = document.getElementById('redemptionsList');
+    redList.innerHTML = '';
+    redeemed.slice(0, 10).forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'redemption-item';
+      item.innerHTML = `
+        <span class="redemption-emoji">${escapeHtml(r.emoji)}</span>
+        <div class="redemption-info">
+          <div class="redemption-name">${escapeHtml(r.title)}</div>
+          <div class="redemption-date">${r.date}</div>
+        </div>
+        <span class="redemption-cost">-${r.cost} 🪙</span>
+      `;
+      redList.appendChild(item);
+    });
+  }
+}
+
+function renderSavings() {
+  const goals = state.savingsGoals || [];
+  const container = document.getElementById('goalsList');
+  container.innerHTML = '';
+  if (goals.length === 0) {
+    container.innerHTML = `<div class="empty"><span class="empty-icon">💰</span>Aún no tienes metas de ahorro.<br>Crea una para empezar a ahorrar para lo que quieres.</div>`;
+    return;
+  }
+  goals.forEach(g => {
+    const saved = g.saved || 0;
+    const pct = Math.min(100, Math.round((saved / g.target) * 100));
+    const done = saved >= g.target;
+    const card = document.createElement('div');
+    card.className = 'goal-card' + (done ? ' completed' : '');
+    const contribs = (g.contributions || []).slice().reverse().slice(0, 5);
+    const contribsHtml = contribs.map(c =>
+      `<div class="contrib-item">
+        <span class="contrib-amount">+${formatMoney(c.amount, g.currency)}</span>
+        <span class="contrib-note">${escapeHtml(c.note || '')}</span>
+        <span class="contrib-date">${c.date}</span>
+      </div>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="goal-header">
+        <span class="goal-emoji">${escapeHtml(g.emoji)}</span>
+        <div class="goal-info">
+          <div class="goal-name">
+            ${escapeHtml(g.title)}
+            ${done ? '<span class="goal-badge-done">✓ Completada</span>' : ''}
+          </div>
+          <div class="goal-target">Meta: ${formatMoney(g.target, g.currency)}</div>
+          <div class="goal-saved">${formatMoney(saved, g.currency)}</div>
+        </div>
+        <div class="goal-actions">
+          ${!done ? `<button class="btn btn-green btn-sm" onclick="openContributionModal('${g.id}')">+ Aportación</button>` : ''}
+          <button class="icon-btn delete" onclick="deleteGoal('${g.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
+      </div>
+      <div class="goal-progress">
+        <div class="goal-bar-wrap"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
+        <div class="goal-bar-meta">
+          <span>${formatMoney(saved, g.currency)} de ${formatMoney(g.target, g.currency)}</span>
+          <span class="goal-bar-pct">${pct}%</span>
+        </div>
+      </div>
+      ${contribs.length ? `<div class="goal-contributions">${contribsHtml}</div>` : ''}
+    `;
+    container.appendChild(card);
+  });
 }
 
 function renderAchievements() {
@@ -905,6 +1421,7 @@ function renderAchievements() {
   document.getElementById('achProgress').textContent = `${unlocked}/${ACHIEVEMENTS.length}`;
 }
 
+// ====== MISSION MODAL ======
 window.openMissionModal = function() {
   document.getElementById('mTitle').value = '';
   document.getElementById('mCat').value = 'prod';
@@ -928,6 +1445,7 @@ window.saveMission = function() {
   toast('Misión creada ✓', 'xp');
 };
 
+// ====== USER MENU ======
 window.openUserMenu = function() { document.getElementById('userMenuModal').classList.add('show'); };
 window.closeUserMenu = function() { document.getElementById('userMenuModal').classList.remove('show'); };
 
@@ -963,6 +1481,7 @@ window.importData = function(event) {
   event.target.value = '';
 };
 
+// ====== EVENTS ======
 document.getElementById('charNameBtn').addEventListener('click', () => {
   const newName = prompt('¿Cómo te llamas, aventurera?', state.name);
   if (newName && newName.trim()) {
@@ -981,9 +1500,20 @@ document.querySelectorAll('.tab').forEach(t => {
   });
 });
 
-document.getElementById('missionModal').addEventListener('click', (e) => { if (e.target.id === 'missionModal') closeMissionModal(); });
-document.getElementById('userMenuModal').addEventListener('click', (e) => { if (e.target.id === 'userMenuModal') closeUserMenu(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMissionModal(); closeUserMenu(); } });
+['missionModal','userMenuModal','configModal','rewardModal','goalModal','contributionModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', (e) => {
+    if (e.target.id === id) e.target.classList.remove('show');
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    ['missionModal','userMenuModal','configModal','rewardModal','goalModal','contributionModal'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
+    });
+    activeGoalId = null;
+  }
+});
 
 setInterval(() => { if (currentUser) { checkDailyReset(); render(); } }, 60000);
 
