@@ -1,6 +1,5 @@
 # Configuración Firebase con datos privados — nunca subir al repositorio
 config.js
-config.example.js
 .env
 .env.*
 .env.local
