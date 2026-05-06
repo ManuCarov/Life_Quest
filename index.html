@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Quest — Tu Vida en Modo Videojuego</title>
+<style>
+  :root {
+    --bg-0: #0a0a0f; --bg-1: #12121a; --bg-2: #1a1a26; --bg-3: #232333;
+    --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.16);
+    --text: #f0f0f5; --text-dim: #a0a0b0; --text-mute: #666675;
+    --accent: #8b7cf6; --accent-2: #a78bfa; --gold: #fbbf24;
+    --green: #34d399; --red: #f87171; --blue: #60a5fa; --pink: #f472b6;
+    --shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+    background: radial-gradient(ellipse at top, #1a1a2e 0%, var(--bg-0) 50%);
+    color: var(--text); min-height: 100vh; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(139,124,246,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(96,165,250,0.06) 0%, transparent 40%);
+    pointer-events: none; z-index: 0;
+  }
+  .app { max-width: 1100px; margin: 0 auto; padding: 24px 20px 100px; position: relative; z-index: 1; }
+
+  .screen-center { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; z-index: 1; }
+  .auth-card {
+    width: 100%; max-width: 440px;
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--border); border-radius: 20px; padding: 32px;
+    box-shadow: var(--shadow);
+  }
+  .auth-logo {
+    text-align: center; margin-bottom: 8px;
+    font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .auth-sub { text-align: center; color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+  .auth-tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .auth-tab { flex: 1; padding: 8px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text-dim); transition: all 0.15s; background: transparent; border: none; font-family: inherit; }
+  .auth-tab.active { background: var(--bg-3); color: var(--text); }
+  .auth-error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; }
+  .auth-error.show { display: block; }
+  .auth-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; }
+  .auth-success.show { display: block; }
+  .setup-warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); color: var(--gold); padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .setup-warn b { color: #fde68a; }
+  .setup-warn code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
+  .auth-foot { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-mute); }
+  .auth-foot a { color: var(--accent); text-decoration: none; cursor: pointer; }
+  .auth-foot a:hover { text-decoration: underline; }
+  .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .full-loader { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--text-dim); }
+  .full-loader .loader { width: 36px; height: 36px; border-width: 3px; border-top-color: var(--accent); }
+
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { background: var(--bg-2); border: 1px solid var(--border); padding: 6px 14px; border-radius: 999px; font-size: 13px; color: var(--text-dim); font-weight: 500; }
+  .pill .icon { margin-right: 4px; }
+  .streak { color: var(--gold); }
+  .sync-pill { display: inline-flex; align-items: center; gap: 6px; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
+  .sync-dot.syncing { background: var(--gold); animation: pulse 1.2s infinite; }
+  .sync-dot.offline { background: var(--text-mute); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .char-card { background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%); border: 1px solid var(--border); border-radius: 20px; padding: 28px; margin-bottom: 24px; position: relative; overflow: hidden; box-shadow: var(--shadow); }
+  .char-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+  .char-row { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+  .avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: white; box-shadow: 0 8px 24px rgba(139,124,246,0.35); flex-shrink: 0; }
+  .char-info { flex: 1; min-width: 200px; }
+  .char-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border-bottom: 1px dashed transparent; transition: all 0.2s; }
+  .char-name:hover { border-bottom-color: var(--text-mute); }
+  .char-name .edit { font-size: 12px; color: var(--text-mute); opacity: 0; transition: opacity 0.2s; }
+  .char-name:hover .edit { opacity: 1; }
+  .char-class { font-size: 13px; color: var(--text-dim); }
+  .char-level { text-align: right; }
+  .char-level .label { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; }
+  .char-level .value { font-size: 36px; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--gold) 0%, #f59e0b 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .xp-bar-wrap { margin-top: 8px; }
+  .xp-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+  .xp-meta .xp-num { color: var(--text); font-weight: 600; }
+  .xp-bar { height: 10px; background: var(--bg-3); border-radius: 999px; overflow: hidden; position: relative; }
+  .xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); border-radius: 999px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+  .xp-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2.5s infinite; }
+  @keyframes shimmer { 0%,100% { transform: translateX(-100%); } 60% { transform: translateX(200%); } }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .stat { background: var(--bg-3); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+  .stat-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .stat-name { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .stat-icon { width: 24px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+  .stat-prod .stat-icon { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .stat-health .stat-icon { background: rgba(52,211,153,0.15); color: var(--green); }
+  .stat-mind .stat-icon { background: rgba(244,114,182,0.15); color: var(--pink); }
+  .stat-lvl { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+  .stat-lvl b { color: var(--text); font-size: 14px; }
+  .stat-bar { height: 6px; background: var(--bg-2); border-radius: 999px; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 999px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+  .stat-prod .stat-bar-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .stat-health .stat-bar-fill { background: linear-gradient(90deg, #10b981, #34d399); }
+  .stat-mind .stat-bar-fill { background: linear-gradient(90deg, #ec4899, #f472b6); }
+
+  .section { margin-bottom: 24px; }
+  .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 4px; }
+  .section-title { font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
+  .section-sub { font-size: 12px; color: var(--text-mute); margin-left: 8px; font-weight: 400; }
+  .btn { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+  .btn:hover:not(:disabled) { background: var(--bg-3); border-color: var(--border-strong); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; color: white; box-shadow: 0 4px 16px rgba(139,124,246,0.3); }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,124,246,0.4); }
+  .btn-block { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
+  .btn-ghost { background: transparent; border-color: var(--border); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; font-weight: 500; }
+  .field input, .field select, .field textarea { width: 100%; background: var(--bg-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 0.15s; }
+  .field textarea { resize: vertical; min-height: 140px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .missions { display: flex; flex-direction: column; gap: 8px; }
+  .mission { background: var(--bg-1); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: all 0.2s; position: relative; overflow: hidden; }
+  .mission:hover { border-color: var(--border-strong); transform: translateX(2px); }
+  .mission.done { opacity: 0.55; background: var(--bg-0); }
+  .mission.done .mission-title { text-decoration: line-through; color: var(--text-mute); }
+  .check { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--border-strong); cursor: pointer; flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; background: transparent; }
+  .check:hover { border-color: var(--accent); transform: scale(1.05); }
+  .mission.done .check { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; }
+  .check svg { opacity: 0; transition: opacity 0.2s; }
+  .mission.done .check svg { opacity: 1; }
+  .mission-body { flex: 1; min-width: 0; }
+  .mission-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .mission-meta { font-size: 11px; color: var(--text-mute); display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  .tag-prod { background: rgba(96,165,250,0.12); color: var(--blue); }
+  .tag-health { background: rgba(52,211,153,0.12); color: var(--green); }
+  .tag-mind { background: rgba(244,114,182,0.12); color: var(--pink); }
+  .tag-xp { background: rgba(251,191,36,0.12); color: var(--gold); }
+  .mission-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+  .mission:hover .mission-actions { opacity: 1; }
+  .icon-btn { background: transparent; border: none; color: var(--text-mute); cursor: pointer; padding: 6px; border-radius: 6px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: var(--bg-3); color: var(--text); }
+  .icon-btn.delete:hover { color: var(--red); }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-mute); font-size: 14px; }
+
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; animation: fadeIn 0.2s; }
+  .modal-bg.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal { background: var(--bg-1); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); max-height: 90vh; overflow-y: auto; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  .toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast { background: var(--bg-2); border: 1px solid var(--border-strong); padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow); min-width: 220px; text-align: center; animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .toast.xp { border-color: var(--gold); color: var(--gold); }
+  .toast.levelup { background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%); border-color: transparent; color: white; font-weight: 700; box-shadow: 0 12px 40px rgba(139,124,246,0.5); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .toast.fade { opacity: 0; transition: opacity 0.4s; }
+
+  .tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border); }
+  .tab { flex: 1; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text-dim); transition: all 0.15s; background: transparent; border: none; font-family: inherit; }
+  .tab.active { background: var(--bg-3); color: var(--text); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .ach { background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; transition: all 0.2s; opacity: 0.4; }
+  .ach.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(135deg, rgba(251,191,36,0.08), transparent); }
+  .ach-emoji { font-size: 32px; margin-bottom: 6px; }
+  .ach-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .ach-desc { font-size: 10px; color: var(--text-mute); }
+
+  .user-menu-btn { background: var(--bg-2); border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px 5px 5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-family: inherit; font-size: 12px; color: var(--text); transition: all 0.15s; }
+  .user-menu-btn:hover { border-color: var(--border-strong); }
+  .user-menu-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+  @media (max-width: 600px) {
+    .app { padding: 16px 14px 100px; }
+    .char-card { padding: 20px; }
+    .char-row { gap: 14px; }
+    .avatar { width: 56px; height: 56px; font-size: 24px; }
+    .char-name { font-size: 18px; }
+    .char-level .value { font-size: 28px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .section-head { flex-wrap: wrap; gap: 8px; }
+    .auth-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="initLoader" class="full-loader">
+  <div class="loader"></div>
+  <div>Cargando Life Quest…</div>
+</div>
+
+<div id="setupScreen" class="screen-center" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">⚔️ Life Quest</div>
+    <div class="auth-sub">Configura tu base de datos (solo una vez)</div>
+    <div class="setup-warn">
+      <b>📋 Pega tu config de Firebase</b><br>
+      Puedes pegar el bloque <b>completo</b> tal como te lo dio Firebase (con <code>const firebaseConfig = {...}</code> y todo). El parser limpia el resto solo.
+    </div>
+    <div class="auth-error" id="setupError"></div>
+    <div class="field">
+      <label>Configuración de Firebase</label>
+      <textarea id="firebaseConfigInput" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "tu-proyecto.firebaseapp.com",
+  projectId: "tu-proyecto",
+  storageBucket: "tu-proyecto.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};'></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveFirebaseConfig()">Guardar y continuar</button>
+    <div class="auth-foot">
+      ¿No tienes Firebase? Abre <code style="background:var(--bg-3);padding:2px 6px;border-radius:4px">DEPLOY.md</code> para la guía paso a paso.
+    </div>
+  </div>
+</div>
+
+<div id="authScreen" class="screen-center" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">⚔️ Life Quest</div>
+    <div class="auth-sub">Inicia sesión para guardar tu progreso en la nube</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-mode="login">Iniciar sesión</button>
+      <button class="auth-tab" data-mode="signup">Crear cuenta</button>
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-success" id="authSuccess"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="authEmail" placeholder="tu@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Contraseña <span style="color:var(--text-mute);font-weight:400">(mínimo 6 caracteres)</span></label>
+      <input type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-block" id="authSubmitBtn" onclick="handleAuth()">Iniciar sesión</button>
+    <div class="auth-foot">
+      <a id="forgotLink" onclick="forgotPassword()">¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" class="app" style="display:none">
+  <div class="header">
+    <div class="logo">⚔️ Life Quest</div>
+    <div class="header-right">
+      <span class="pill sync-pill" id="syncPill" title="Sincronización"><span class="sync-dot" id="syncDot"></span><span id="syncText">Sincronizado</span></span>
+      <span class="pill streak" id="streakPill"><span class="icon">🔥</span><span id="streakNum">0</span> días</span>
+      <button class="user-menu-btn" onclick="openUserMenu()" id="userMenuBtn">
+        <span class="user-menu-avatar" id="userMenuAvatar">E</span>
+        <span id="userMenuEmail">…</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="char-card">
+    <div class="char-row">
+      <div class="avatar" id="avatar">E</div>
+      <div class="char-info">
+        <div class="char-name" id="charNameBtn">
+          <span id="charName">Aventurera</span>
+          <span class="edit">✎ editar</span>
+        </div>
+        <div class="char-class" id="charClass">Aventurera Nivel 1</div>
+      </div>
+      <div class="char-level">
+        <div class="label">Nivel</div>
+        <div class="value" id="charLevel">1</div>
+      </div>
+    </div>
+    <div class="xp-bar-wrap">
+      <div class="xp-meta">
+        <span><span class="xp-num" id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP</span>
+        <span id="xpRemain">100 XP para subir</span>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat stat-prod">
+        <div class="stat-head">
+          <div class="stat-name"><span class="stat-icon">⚡</span>Productividad</div>
+          <div class="stat-lvl">Nv <b id="prodLvl">1</b></div>
+        </div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="prodFill" style="width:0%"></div></div>
+      </div>
+      <div class="stat stat-health">
+        <div class="stat-head">
+          <div class="stat-name"><span class="stat-icon">💪</span>Salud</div>
+          <div class="stat-lvl">Nv <b id="healthLvl">1</b></div>
+        </div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="healthFill" style="width:0%"></div></div>
+      </div>
+      <div class="stat stat-mind">
+        <div class="stat-head">
+          <div class="stat-name"><span class="stat-icon">🧠</span>Mente</div>
+          <div class="stat-lvl">Nv <b id="mindLvl">1</b></div>
+        </div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="mindFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="daily">Misiones de hoy</button>
+    <button class="tab" data-tab="custom">Mis misiones</button>
+    <button class="tab" data-tab="achievements">Logros</button>
+  </div>
+
+  <div class="tab-content" id="tab-daily">
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Misiones diarias <span class="section-sub" id="dailyProgress">0/0 completadas</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="resetDaily()">↻ Reiniciar día</button>
+      </div>
+      <div class="missions" id="dailyList"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-custom" style="display:none">
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Mis misiones personalizadas</div>
+        <button class="btn btn-primary btn-sm" onclick="openMissionModal()">+ Nueva misión</button>
+      </div>
+      <div class="missions" id="customList"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-achievements" style="display:none">
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Logros desbloqueados <span class="section-sub" id="achProgress">0/0</span></div>
+      </div>
+      <div class="achievements-grid" id="achGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="missionModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Nueva misión</div>
+    <div class="field">
+      <label>Nombre de la misión</label>
+      <input type="text" id="mTitle" placeholder="Ej: Hacer 30 min de ejercicio" maxlength="80">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Categoría</label>
+        <select id="mCat">
+          <option value="prod">⚡ Productividad</option>
+          <option value="health">💪 Salud</option>
+          <option value="mind">🧠 Mente</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Dificultad (XP)</label>
+        <select id="mXp">
+          <option value="10">Fácil (10 XP)</option>
+          <option value="25" selected>Media (25 XP)</option>
+          <option value="50">Difícil (50 XP)</option>
+          <option value="100">Épica (100 XP)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="mType">
+        <option value="daily">Diaria (se reinicia cada día)</option>
+        <option value="once">Única (solo una vez)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeMissionModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveMission()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="userMenuModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title">Tu cuenta</div>
+    <div style="background:var(--bg-2);padding:12px 14px;border-radius:10px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text-mute);margin-bottom:2px">Sesión activa</div>
+      <div id="accountEmail" style="font-size:14px;font-weight:500"></div>
+    </div>
+    <button class="btn btn-block" onclick="exportData()" style="margin-bottom:8px">📥 Exportar respaldo</button>
+    <button class="btn btn-block" onclick="document.getElementById('importFile').click()" style="margin-bottom:8px">📤 Importar respaldo</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-block" onclick="logout()" style="color:var(--red)">Cerrar sesión</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeUserMenu()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, onAuthStateChanged, sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FBKEY = 'lifeQuest_firebaseConfig';
+
+let app, auth, db;
+let currentUser = null;
+let unsubscribeSnapshot = null;
+let saveTimeout = null;
+let isApplyingRemote = false;
+let state = defaultState();
+
+function defaultState() {
+  return {
+    name: 'Aventurera', xp: 0, statXp: { prod: 0, health: 0, mind: 0 },
+    streak: 0, lastActiveDate: null, achievements: {},
+    customMissions: [], presetCompletedToday: {},
+    customCompletedToday: {}, customCompletedOnce: {},
+    dailyResetDate: null, _totalEverCompleted: 0
+  };
+}
+
+const PRESETS = [
+  { id: 'p1', title: 'Hacer al menos 20 min de ejercicio', cat: 'health', xp: 25 },
+  { id: 'p2', title: 'Beber 8 vasos de agua', cat: 'health', xp: 15 },
+  { id: 'p3', title: 'Dormir 7-8 horas', cat: 'health', xp: 20 },
+  { id: 'p4', title: 'Comer 3 comidas saludables', cat: 'health', xp: 20 },
+  { id: 'p5', title: 'Leer 20 páginas de un libro', cat: 'mind', xp: 25 },
+  { id: 'p6', title: 'Meditar 10 minutos', cat: 'mind', xp: 20 },
+  { id: 'p7', title: 'Aprender algo nuevo (video, artículo, curso)', cat: 'mind', xp: 30 },
+  { id: 'p8', title: 'Escribir en un diario o reflexionar', cat: 'mind', xp: 15 },
+  { id: 'p9', title: 'Completar 3 tareas importantes', cat: 'prod', xp: 30 },
+  { id: 'p10', title: 'Trabajar 1 hora sin distracciones (deep work)', cat: 'prod', xp: 35 },
+  { id: 'p11', title: 'Ordenar el espacio de trabajo', cat: 'prod', xp: 10 },
+  { id: 'p12', title: 'Planear el día por la mañana', cat: 'prod', xp: 15 }
+];
+
+const ACHIEVEMENTS = [
+  { id: 'first', emoji: '🌱', title: 'Primer Paso', desc: 'Completa tu primera misión', check: s => totalCompleted() >= 1 },
+  { id: 'lvl5', emoji: '⭐', title: 'Aventurera', desc: 'Alcanza el nivel 5', check: s => calcLevel(s.xp) >= 5 },
+  { id: 'lvl10', emoji: '💫', title: 'Veterana', desc: 'Alcanza el nivel 10', check: s => calcLevel(s.xp) >= 10 },
+  { id: 'lvl25', emoji: '👑', title: 'Maestra', desc: 'Alcanza el nivel 25', check: s => calcLevel(s.xp) >= 25 },
+  { id: 'streak3', emoji: '🔥', title: 'En racha', desc: 'Mantén una racha de 3 días', check: s => s.streak >= 3 },
+  { id: 'streak7', emoji: '⚡', title: 'Imparable', desc: 'Mantén una racha de 7 días', check: s => s.streak >= 7 },
+  { id: 'streak30', emoji: '🏆', title: 'Leyenda', desc: 'Racha de 30 días', check: s => s.streak >= 30 },
+  { id: 'balance', emoji: '☯️', title: 'Equilibrio', desc: 'Sube las 3 stats al nivel 3', check: s => calcLevel(s.statXp.prod) >= 3 && calcLevel(s.statXp.health) >= 3 && calcLevel(s.statXp.mind) >= 3 },
+  { id: 'prodMax', emoji: '⚡', title: 'Productividad++', desc: 'Sube Productividad al nivel 10', check: s => calcLevel(s.statXp.prod) >= 10 },
+  { id: 'healthMax', emoji: '💪', title: 'Atlética', desc: 'Sube Salud al nivel 10', check: s => calcLevel(s.statXp.health) >= 10 },
+  { id: 'mindMax', emoji: '🧠', title: 'Sabia', desc: 'Sube Mente al nivel 10', check: s => calcLevel(s.statXp.mind) >= 10 },
+  { id: 'custom5', emoji: '✨', title: 'Arquitecta', desc: 'Crea 5 misiones personalizadas', check: s => s.customMissions.length >= 5 }
+];
+
+function calcLevel(xp) { return Math.floor(Math.sqrt(xp / 50)) + 1; }
+function xpForLevel(lvl) { return Math.pow(lvl - 1, 2) * 50; }
+function xpForNextLevel(lvl) { return Math.pow(lvl, 2) * 50; }
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1).toString().padStart(2,'0') + '-' + d.getDate().toString().padStart(2,'0');
+}
+function totalCompleted() {
+  let n = state._totalEverCompleted || 0;
+  Object.values(state.presetCompletedToday).forEach(v => v && n++);
+  Object.values(state.customCompletedToday).forEach(v => v && n++);
+  Object.values(state.customCompletedOnce).forEach(v => v && n++);
+  return n;
+}
+function escapeHtml(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+function bootstrap() {
+  const cfg = localStorage.getItem(FBKEY);
+  if (!cfg) { showSetup(); return; }
+  try { initFirebase(JSON.parse(cfg)); }
+  catch (e) { console.error(e); localStorage.removeItem(FBKEY); showSetup(); }
+}
+
+function initFirebase(cfg) {
+  try {
+    app = initializeApp(cfg);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    onAuthStateChanged(auth, handleAuthChange);
+  } catch (e) {
+    console.error(e);
+    document.getElementById('initLoader').style.display = 'none';
+    showSetup();
+    setError('setupError', 'Error inicializando Firebase: ' + e.message);
+  }
+}
+
+function handleAuthChange(user) {
+  document.getElementById('initLoader').style.display = 'none';
+  if (user) {
+    currentUser = user;
+    showMainApp();
+    subscribeToData();
+  } else {
+    currentUser = null;
+    if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+    showAuth();
+  }
+}
+
+function hideAll() {
+  document.getElementById('initLoader').style.display = 'none';
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'none';
+}
+function showSetup() { hideAll(); document.getElementById('setupScreen').style.display = 'flex'; }
+function showAuth() { hideAll(); document.getElementById('authScreen').style.display = 'flex'; }
+function showMainApp() {
+  hideAll();
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userMenuEmail').textContent = currentUser.email;
+  document.getElementById('accountEmail').textContent = currentUser.email;
+  document.getElementById('userMenuAvatar').textContent = (currentUser.email || '?').charAt(0).toUpperCase();
+}
+
+function setError(id, msg) {
+  const el = document.getElementById(id);
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+function setSuccess(msg) {
+  const el = document.getElementById('authSuccess');
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+
+// ====== SETUP — parser robusto ======
+window.saveFirebaseConfig = function() {
+  setError('setupError', '');
+  let txt = document.getElementById('firebaseConfigInput').value.trim();
+  if (!txt) { setError('setupError', 'Pega tu config de Firebase'); return; }
+
+  // Encontrar el primer { y su llave de cierre, ignorando llaves dentro de strings
+  const firstBrace = txt.indexOf('{');
+  if (firstBrace === -1) {
+    setError('setupError', 'No encontré ningún { en el texto. Pega el objeto completo con sus llaves.');
+    return;
+  }
+  let depth = 0, lastBrace = -1;
+  let inString = false, stringChar = '';
+  for (let i = firstBrace; i < txt.length; i++) {
+    const ch = txt[i];
+    if (inString) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === stringChar) inString = false;
+    } else {
+      if (ch === '"' || ch === "'" || ch === '`') { inString = true; stringChar = ch; }
+      else if (ch === '{') depth++;
+      else if (ch === '}') { depth--; if (depth === 0) { lastBrace = i; break; } }
+    }
+  }
+  if (lastBrace === -1) {
+    setError('setupError', 'Falta la llave de cierre }. Asegúrate de copiar el objeto completo.');
+    return;
+  }
+  const objText = txt.substring(firstBrace, lastBrace + 1);
+
+  let cfg;
+  try {
+    // 1) Intentar como JSON estricto
+    cfg = JSON.parse(objText);
+  } catch (e) {
+    try {
+      // 2) Intentar como objeto JavaScript (lo que da Firebase: claves sin comillas, comillas simples, etc.)
+      cfg = (new Function('return (' + objText + ')'))();
+    } catch (e2) {
+      setError('setupError', 'No se pudo leer el config. Detalle: ' + e2.message);
+      return;
+    }
+  }
+  if (!cfg || typeof cfg !== 'object') { setError('setupError', 'El config no es un objeto válido.'); return; }
+  if (!cfg.apiKey || !cfg.projectId) { setError('setupError', 'Falta apiKey o projectId en el config.'); return; }
+
+  localStorage.setItem(FBKEY, JSON.stringify(cfg));
+  document.getElementById('initLoader').style.display = 'flex';
+  document.getElementById('setupScreen').style.display = 'none';
+  initFirebase(cfg);
+};
+
+// ====== AUTH ======
+let authMode = 'login';
+document.querySelectorAll('.auth-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    authMode = t.dataset.mode;
+    document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? 'Iniciar sesión' : 'Crear cuenta';
+    setError('authError',''); setSuccess('');
+  });
+});
+
+window.handleAuth = async function() {
+  setError('authError',''); setSuccess('');
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password) { setError('authError', 'Completa email y contraseña.'); return; }
+  if (password.length < 6) { setError('authError', 'La contraseña debe tener al menos 6 caracteres.'); return; }
+  const btn = document.getElementById('authSubmitBtn');
+  const originalText = btn.textContent;
+  btn.disabled = true; btn.innerHTML = '<span class="loader"></span>';
+  try {
+    if (authMode === 'login') await signInWithEmailAndPassword(auth, email, password);
+    else await createUserWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    let msg = e.message;
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') msg = 'Email o contraseña incorrectos.';
+    else if (e.code === 'auth/email-already-in-use') msg = 'Este email ya está registrado. Inicia sesión.';
+    else if (e.code === 'auth/invalid-email') msg = 'Email inválido.';
+    else if (e.code === 'auth/weak-password') msg = 'Contraseña muy débil.';
+    else if (e.code === 'auth/network-request-failed') msg = 'Sin conexión a internet.';
+    else if (e.code === 'auth/operation-not-allowed') msg = 'Activa Email/Password en Firebase Authentication.';
+    setError('authError', msg);
+    btn.disabled = false; btn.textContent = originalText;
+  }
+};
+
+window.forgotPassword = async function() {
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email) { setError('authError', 'Escribe tu email primero.'); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setSuccess('Te enviamos un email para restablecer tu contraseña.');
+    setError('authError','');
+  } catch (e) { setError('authError', e.message); }
+};
+
+window.logout = async function() { closeUserMenu(); await signOut(auth); };
+
+// ====== FIRESTORE SYNC ======
+function userDocRef() { return doc(db, 'users', currentUser.uid); }
+
+async function subscribeToData() {
+  setSyncStatus('syncing', 'Cargando…');
+  try {
+    const ref = userDocRef();
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.state) {
+        isApplyingRemote = true;
+        state = Object.assign(defaultState(), data.state);
+        isApplyingRemote = false;
+      }
+    } else {
+      await setDoc(ref, { state: state, updatedAt: serverTimestamp() });
+    }
+    render();
+    checkAchievements();
+    setSyncStatus('ok', 'Sincronizado');
+
+    unsubscribeSnapshot = onSnapshot(ref, (s) => {
+      if (!s.exists()) return;
+      const d = s.data();
+      if (d.state && !saveTimeout) {
+        isApplyingRemote = true;
+        state = Object.assign(defaultState(), d.state);
+        isApplyingRemote = false;
+        render();
+      }
+    }, (err) => { setSyncStatus('offline', 'Sin conexión'); console.error(err); });
+  } catch (e) {
+    setSyncStatus('offline', 'Error');
+    console.error(e);
+    toast('No se pudo cargar tus datos: ' + e.message);
+  }
+}
+
+function saveStateRemote() {
+  if (isApplyingRemote || !currentUser) return;
+  setSyncStatus('syncing', 'Guardando…');
+  if (saveTimeout) clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    try {
+      await setDoc(userDocRef(), { state: state, updatedAt: serverTimestamp() }, { merge: false });
+      setSyncStatus('ok', 'Sincronizado');
+    } catch (e) { setSyncStatus('offline', 'Sin conexión'); console.error(e); }
+    finally { saveTimeout = null; }
+  }, 800);
+}
+
+function setSyncStatus(status, text) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  dot.className = 'sync-dot' + (status === 'syncing' ? ' syncing' : status === 'offline' ? ' offline' : '');
+  txt.textContent = text;
+}
+
+function checkDailyReset() {
+  const today = todayStr();
+  if (state.dailyResetDate !== today) {
+    const completedYesterday = Object.values(state.presetCompletedToday).filter(v=>v).length
+      + Object.values(state.customCompletedToday).filter(v=>v).length;
+    state._totalEverCompleted = (state._totalEverCompleted || 0) + completedYesterday;
+    if (state.lastActiveDate) {
+      const last = new Date(state.lastActiveDate);
+      const todayD = new Date(today);
+      const diffDays = Math.round((todayD - last) / (1000*60*60*24));
+      if (completedYesterday > 0 && diffDays === 1) state.streak += 1;
+      else if (diffDays > 1) state.streak = 0;
+    }
+    state.presetCompletedToday = {};
+    state.customCompletedToday = {};
+    state.dailyResetDate = today;
+    saveStateRemote();
+  }
+}
+
+window.resetDaily = function() {
+  if (!confirm('¿Reiniciar las misiones diarias? Las que tenías completadas se desmarcarán.')) return;
+  state.presetCompletedToday = {};
+  state.customCompletedToday = {};
+  saveStateRemote();
+  render();
+  toast('Día reiniciado', '');
+};
+
+function toast(msg, type='') {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => t.classList.add('fade'), 2000);
+  setTimeout(() => t.remove(), 2500);
+}
+
+window.toggleMission = function(id, isPreset, isOnce=false) {
+  const map = isOnce ? state.customCompletedOnce : (isPreset ? state.presetCompletedToday : state.customCompletedToday);
+  const wasCompleted = !!map[id];
+  let mission = isPreset ? PRESETS.find(p => p.id === id) : state.customMissions.find(m => m.id === id);
+  if (!mission) return;
+  if (wasCompleted) {
+    delete map[id];
+    state.xp = Math.max(0, state.xp - mission.xp);
+    state.statXp[mission.cat] = Math.max(0, state.statXp[mission.cat] - mission.xp);
+  } else {
+    map[id] = true;
+    const oldLevel = calcLevel(state.xp);
+    state.xp += mission.xp;
+    state.statXp[mission.cat] += mission.xp;
+    state.lastActiveDate = todayStr();
+    const newLevel = calcLevel(state.xp);
+    toast(`+${mission.xp} XP`, 'xp');
+    if (newLevel > oldLevel) setTimeout(() => toast(`🎉 ¡Subiste al nivel ${newLevel}!`, 'levelup'), 300);
+  }
+  saveStateRemote();
+  render();
+  if (!wasCompleted) checkAchievements();
+};
+
+window.deleteMission = function(id) {
+  if (!confirm('¿Eliminar esta misión?')) return;
+  state.customMissions = state.customMissions.filter(m => m.id !== id);
+  delete state.customCompletedToday[id];
+  delete state.customCompletedOnce[id];
+  saveStateRemote();
+  render();
+};
+
+function checkAchievements() {
+  let unlocked = false;
+  ACHIEVEMENTS.forEach(a => {
+    if (!state.achievements[a.id] && a.check(state)) {
+      state.achievements[a.id] = true;
+      unlocked = true;
+      setTimeout(() => toast(`🏆 Logro desbloqueado: ${a.title}`, 'levelup'), 600);
+    }
+  });
+  if (unlocked) saveStateRemote();
+  renderAchievements();
+}
+
+function render() {
+  checkDailyReset();
+  document.getElementById('charName').textContent = state.name;
+  document.getElementById('avatar').textContent = (state.name || '?').charAt(0).toUpperCase();
+  const lvl = calcLevel(state.xp);
+  document.getElementById('charLevel').textContent = lvl;
+  const xpStart = xpForLevel(lvl);
+  const xpEnd = xpForNextLevel(lvl);
+  const xpInLevel = state.xp - xpStart;
+  const xpNeeded = xpEnd - xpStart;
+  const pct = Math.min(100, (xpInLevel / xpNeeded) * 100);
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpCurrent').textContent = xpInLevel;
+  document.getElementById('xpNeeded').textContent = xpNeeded;
+  document.getElementById('xpRemain').textContent = (xpNeeded - xpInLevel) + ' XP para subir';
+
+  const classNames = ['Aprendiz', 'Aventurera', 'Exploradora', 'Guerrera', 'Heroína', 'Veterana', 'Maestra', 'Leyenda'];
+  const classIdx = Math.min(classNames.length - 1, Math.floor(lvl / 5));
+  document.getElementById('charClass').textContent = `${classNames[classIdx]} Nivel ${lvl}`;
+
+  ['prod','health','mind'].forEach(cat => {
+    const sLvl = calcLevel(state.statXp[cat]);
+    const sStart = xpForLevel(sLvl);
+    const sEnd = xpForNextLevel(sLvl);
+    const sPct = Math.min(100, ((state.statXp[cat] - sStart) / (sEnd - sStart)) * 100);
+    document.getElementById(cat + 'Lvl').textContent = sLvl;
+    document.getElementById(cat + 'Fill').style.width = sPct + '%';
+  });
+
+  document.getElementById('streakNum').textContent = state.streak;
+  renderDailyMissions();
+  renderCustomMissions();
+  renderAchievements();
+}
+
+function renderDailyMissions() {
+  const list = document.getElementById('dailyList');
+  list.innerHTML = '';
+  const dailyCustom = state.customMissions.filter(m => m.type === 'daily');
+  let total = PRESETS.length + dailyCustom.length;
+  let done = 0;
+  PRESETS.forEach(m => {
+    const completed = !!state.presetCompletedToday[m.id];
+    if (completed) done++;
+    list.appendChild(missionEl(m, completed, true, false));
+  });
+  dailyCustom.forEach(m => {
+    const completed = !!state.customCompletedToday[m.id];
+    if (completed) done++;
+    list.appendChild(missionEl(m, completed, false, false, true));
+  });
+  document.getElementById('dailyProgress').textContent = `${done}/${total} completadas`;
+}
+
+function renderCustomMissions() {
+  const list = document.getElementById('customList');
+  list.innerHTML = '';
+  if (state.customMissions.length === 0) {
+    list.innerHTML = '<div class="empty">Aún no has creado misiones personalizadas.<br>Toca "+ Nueva misión" para empezar.</div>';
+    return;
+  }
+  state.customMissions.forEach(m => {
+    const isOnce = m.type === 'once';
+    const completed = isOnce ? !!state.customCompletedOnce[m.id] : !!state.customCompletedToday[m.id];
+    list.appendChild(missionEl(m, completed, false, isOnce, true));
+  });
+}
+
+function missionEl(m, completed, isPreset, isOnce, showDelete=false) {
+  const div = document.createElement('div');
+  div.className = 'mission' + (completed ? ' done' : '');
+  const catLabels = { prod: '⚡ Productividad', health: '💪 Salud', mind: '🧠 Mente' };
+  const typeLabel = m.type === 'once' ? '🎯 Única' : '';
+  div.innerHTML = `
+    <button class="check" aria-label="Completar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+    <div class="mission-body">
+      <div class="mission-title">${escapeHtml(m.title)}</div>
+      <div class="mission-meta">
+        <span class="tag tag-${m.cat}">${catLabels[m.cat]}</span>
+        <span class="tag tag-xp">+${m.xp} XP</span>
+        ${typeLabel ? `<span style="color:var(--text-mute)">${typeLabel}</span>` : ''}
+      </div>
+    </div>
+    ${showDelete ? `<div class="mission-actions"><button class="icon-btn delete" aria-label="Eliminar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button></div>` : ''}
+  `;
+  div.querySelector('.check').addEventListener('click', () => toggleMission(m.id, isPreset, isOnce));
+  if (showDelete) div.querySelector('.delete').addEventListener('click', (e) => { e.stopPropagation(); deleteMission(m.id); });
+  return div;
+}
+
+function renderAchievements() {
+  const grid = document.getElementById('achGrid');
+  grid.innerHTML = '';
+  let unlocked = 0;
+  ACHIEVEMENTS.forEach(a => {
+    const isUnlocked = !!state.achievements[a.id];
+    if (isUnlocked) unlocked++;
+    const div = document.createElement('div');
+    div.className = 'ach' + (isUnlocked ? ' unlocked' : '');
+    div.innerHTML = `<div class="ach-emoji">${isUnlocked ? a.emoji : '🔒'}</div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div>`;
+    grid.appendChild(div);
+  });
+  document.getElementById('achProgress').textContent = `${unlocked}/${ACHIEVEMENTS.length}`;
+}
+
+window.openMissionModal = function() {
+  document.getElementById('mTitle').value = '';
+  document.getElementById('mCat').value = 'prod';
+  document.getElementById('mXp').value = '25';
+  document.getElementById('mType').value = 'daily';
+  document.getElementById('missionModal').classList.add('show');
+  setTimeout(() => document.getElementById('mTitle').focus(), 100);
+};
+window.closeMissionModal = function() { document.getElementById('missionModal').classList.remove('show'); };
+window.saveMission = function() {
+  const title = document.getElementById('mTitle').value.trim();
+  if (!title) { toast('Escribe un nombre para la misión'); return; }
+  const cat = document.getElementById('mCat').value;
+  const xp = parseInt(document.getElementById('mXp').value);
+  const type = document.getElementById('mType').value;
+  state.customMissions.push({ id: 'c' + Date.now(), title, cat, xp, type });
+  saveStateRemote();
+  render();
+  closeMissionModal();
+  checkAchievements();
+  toast('Misión creada ✓', 'xp');
+};
+
+window.openUserMenu = function() { document.getElementById('userMenuModal').classList.add('show'); };
+window.closeUserMenu = function() { document.getElementById('userMenuModal').classList.remove('show'); };
+
+window.exportData = function() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `life-quest-backup-${todayStr()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Respaldo descargado ✓', 'xp');
+};
+
+window.importData = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!confirm('¿Reemplazar tu progreso actual con el del archivo?')) { event.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      state = Object.assign(defaultState(), imported);
+      saveStateRemote();
+      render();
+      checkAchievements();
+      closeUserMenu();
+      toast('Progreso importado ✓', 'xp');
+    } catch (err) { toast('Archivo inválido'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+};
+
+document.getElementById('charNameBtn').addEventListener('click', () => {
+  const newName = prompt('¿Cómo te llamas, aventurera?', state.name);
+  if (newName && newName.trim()) {
+    state.name = newName.trim().slice(0, 20);
+    saveStateRemote();
+    render();
+  }
+});
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.getElementById('tab-' + t.dataset.tab).style.display = 'block';
+  });
+});
+
+document.getElementById('missionModal').addEventListener('click', (e) => { if (e.target.id === 'missionModal') closeMissionModal(); });
+document.getElementById('userMenuModal').addEventListener('click', (e) => { if (e.target.id === 'userMenuModal') closeUserMenu(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMissionModal(); closeUserMenu(); } });
+
+setInterval(() => { if (currentUser) { checkDailyReset(); render(); } }, 60000);
+
+bootstrap();
+</script>
+</body>
+</html>
