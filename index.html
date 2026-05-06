@@ -46,9 +46,9 @@
   .auth-error.show { display: block; }
   .auth-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; }
   .auth-success.show { display: block; }
-  .config-banner { background: rgba(139,124,246,0.08); border: 1px solid rgba(139,124,246,0.3); border-radius: 12px; padding: 14px; margin-bottom: 18px; display: none; }
-  .config-banner p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.5; }
-  .config-banner b { color: var(--accent-2); }
+  .app-error { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; gap: 12px; color: var(--text-dim); }
+  .app-error h2 { color: var(--text); font-size: 20px; }
+  .app-error code { background: var(--bg-2); padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 13px; color: var(--accent-2); }
   .auth-foot { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-mute); }
   .auth-foot a { color: var(--accent); text-decoration: none; cursor: pointer; }
   .auth-foot a:hover { text-decoration: underline; }
@@ -251,9 +251,6 @@
   .user-menu-btn:hover { border-color: var(--border-strong); }
   .user-menu-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
 
-  .setup-warn { background: rgba(139,124,246,0.08); border: 1px solid rgba(139,124,246,0.3); color: var(--text-dim); padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .setup-warn b { color: var(--accent-2); }
-  .setup-warn code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px; }
 
   @media (max-width: 600px) {
     .app { padding: 16px 14px 100px; }
@@ -292,11 +289,6 @@
   <div class="auth-card">
     <div class="auth-logo">⚔️ Life Quest</div>
     <div class="auth-sub">Inicia sesión para guardar tu progreso</div>
-
-    <div class="config-banner" id="configBanner">
-      <p><b>Primer uso:</b> necesitas conectar tu base de datos de Firebase para guardar tu progreso en la nube.</p>
-      <button class="btn btn-primary btn-block" onclick="openConfigModal()">⚙️ Configurar Firebase</button>
-    </div>
 
     <div class="auth-tabs">
       <button class="auth-tab active" data-mode="login">Iniciar sesión</button>
@@ -577,32 +569,6 @@
   </div>
 </div>
 
-<!-- Modal: Configuración Firebase -->
-<div class="modal-bg" id="configModal">
-  <div class="modal">
-    <div class="modal-title">⚙️ Configuración de Firebase</div>
-    <div class="setup-warn">
-      <b>📋 Pega tu config de Firebase</b> — puedes pegar el bloque completo tal como te lo dio Firebase (con <code>const firebaseConfig = {...}</code>). Tu configuración se guarda solo en tu navegador y <b>nunca se sube al repositorio</b>.
-    </div>
-    <div class="auth-error" id="configError"></div>
-    <div class="field">
-      <label>Configuración de Firebase</label>
-      <textarea id="firebaseConfigInput" placeholder='const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
-};'></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeConfigModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveFirebaseConfig()">Guardar y conectar</button>
-    </div>
-  </div>
-</div>
-
 <!-- Modal: Menú usuario -->
 <div class="modal-bg" id="userMenuModal">
   <div class="modal" style="max-width:380px">
@@ -614,7 +580,6 @@
     <button class="btn btn-block" onclick="exportData()" style="margin-bottom:8px">📥 Exportar respaldo</button>
     <button class="btn btn-block" onclick="document.getElementById('importFile').click()" style="margin-bottom:8px">📤 Importar respaldo</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn btn-block" onclick="closeUserMenu();openConfigModal()" style="margin-bottom:8px">⚙️ Configuración Firebase</button>
     <button class="btn btn-block btn-danger" onclick="logout()">Cerrar sesión</button>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeUserMenu()">Cerrar</button>
@@ -623,6 +588,9 @@
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Configuración de Firebase (archivo local, no incluido en git) -->
+<script src="config.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -634,7 +602,6 @@ import {
   getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const FBKEY = 'lifeQuest_firebaseConfig';
 let app, auth, db;
 let currentUser = null;
 let unsubscribeSnapshot = null;
@@ -732,24 +699,15 @@ function formatMoney(amount, currency) {
 
 // ====== BOOTSTRAP ======
 function bootstrap() {
-  const cfg = localStorage.getItem(FBKEY);
+  const cfg = window.FIREBASE_CONFIG;
   if (!cfg) {
     document.getElementById('initLoader').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('configBanner').style.display = 'block';
+    document.body.innerHTML = `<div class="app-error">
+      <h2>⚠️ Falta config.js</h2>
+      <p>Copia <code>config.example.js</code> → <code>config.js</code> y rellena con tus datos de Firebase.</p>
+    </div>`;
     return;
   }
-  try { initFirebase(JSON.parse(cfg)); }
-  catch (e) {
-    console.error(e);
-    localStorage.removeItem(FBKEY);
-    document.getElementById('initLoader').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('configBanner').style.display = 'block';
-  }
-}
-
-function initFirebase(cfg) {
   try {
     app = initializeApp(cfg);
     auth = getAuth(app);
@@ -758,9 +716,10 @@ function initFirebase(cfg) {
   } catch (e) {
     console.error(e);
     document.getElementById('initLoader').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('configBanner').style.display = 'block';
-    setConfigError('Error inicializando Firebase: ' + e.message);
+    document.body.innerHTML = `<div class="app-error">
+      <h2>⚠️ Error al conectar Firebase</h2>
+      <p>${e.message}</p>
+    </div>`;
   }
 }
 
@@ -775,7 +734,6 @@ function handleAuthChange(user) {
     if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
     document.getElementById('mainApp').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('configBanner').style.display = 'none';
   }
 }
 
@@ -786,65 +744,6 @@ function showMainApp() {
   document.getElementById('accountEmail').textContent = currentUser.email;
   document.getElementById('userMenuAvatar').textContent = (currentUser.email || '?').charAt(0).toUpperCase();
 }
-
-// ====== CONFIG MODAL ======
-window.openConfigModal = function() {
-  const existing = localStorage.getItem(FBKEY);
-  if (existing) {
-    try {
-      const cfg = JSON.parse(existing);
-      document.getElementById('firebaseConfigInput').value = JSON.stringify(cfg, null, 2);
-    } catch(e) {}
-  } else {
-    document.getElementById('firebaseConfigInput').value = '';
-  }
-  setConfigError('');
-  document.getElementById('configModal').classList.add('show');
-};
-window.closeConfigModal = function() { document.getElementById('configModal').classList.remove('show'); };
-
-function setConfigError(msg) {
-  const el = document.getElementById('configError');
-  if (msg) { el.textContent = msg; el.classList.add('show'); }
-  else { el.textContent = ''; el.classList.remove('show'); }
-}
-
-window.saveFirebaseConfig = function() {
-  setConfigError('');
-  let txt = document.getElementById('firebaseConfigInput').value.trim();
-  if (!txt) { setConfigError('Pega tu config de Firebase'); return; }
-
-  const firstBrace = txt.indexOf('{');
-  if (firstBrace === -1) { setConfigError('No encontré ningún { en el texto.'); return; }
-  let depth = 0, lastBrace = -1, inString = false, stringChar = '';
-  for (let i = firstBrace; i < txt.length; i++) {
-    const ch = txt[i];
-    if (inString) {
-      if (ch === '\\') { i++; continue; }
-      if (ch === stringChar) inString = false;
-    } else {
-      if (ch === '"' || ch === "'" || ch === '`') { inString = true; stringChar = ch; }
-      else if (ch === '{') depth++;
-      else if (ch === '}') { depth--; if (depth === 0) { lastBrace = i; break; } }
-    }
-  }
-  if (lastBrace === -1) { setConfigError('Falta la llave de cierre }. Copia el objeto completo.'); return; }
-  const objText = txt.substring(firstBrace, lastBrace + 1);
-  let cfg;
-  try { cfg = JSON.parse(objText); }
-  catch (e) {
-    try { cfg = (new Function('return (' + objText + ')'))(); }
-    catch (e2) { setConfigError('No se pudo leer el config: ' + e2.message); return; }
-  }
-  if (!cfg || typeof cfg !== 'object') { setConfigError('El config no es un objeto válido.'); return; }
-  if (!cfg.apiKey || !cfg.projectId) { setConfigError('Falta apiKey o projectId en el config.'); return; }
-
-  localStorage.setItem(FBKEY, JSON.stringify(cfg));
-  closeConfigModal();
-  document.getElementById('initLoader').style.display = 'flex';
-  document.getElementById('authScreen').style.display = 'none';
-  initFirebase(cfg);
-};
 
 // ====== AUTH ======
 let authMode = 'login';
@@ -1500,7 +1399,7 @@ document.querySelectorAll('.tab').forEach(t => {
   });
 });
 
-['missionModal','userMenuModal','configModal','rewardModal','goalModal','contributionModal'].forEach(id => {
+['missionModal','userMenuModal','rewardModal','goalModal','contributionModal'].forEach(id => {
   document.getElementById(id).addEventListener('click', (e) => {
     if (e.target.id === id) e.target.classList.remove('show');
   });
@@ -1508,7 +1407,7 @@ document.querySelectorAll('.tab').forEach(t => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    ['missionModal','userMenuModal','configModal','rewardModal','goalModal','contributionModal'].forEach(id => {
+    ['missionModal','userMenuModal','rewardModal','goalModal','contributionModal'].forEach(id => {
       document.getElementById(id).classList.remove('show');
     });
     activeGoalId = null;

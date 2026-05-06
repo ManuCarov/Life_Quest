@@ -1,9 +1,10 @@
-# Datos personales y configuración local — nunca subir al repositorio
+# Configuración Firebase con datos privados — nunca subir al repositorio
+config.js
+config.example.js
 .env
 .env.*
 .env.local
 *.local
-config.local.*
 firebase.local.*
 secrets.*
 
